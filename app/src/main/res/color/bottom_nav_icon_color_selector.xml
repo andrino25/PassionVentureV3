@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:color="@color/white" android:state_checked="true" />
+    <!-- Color for the normal state -->
+    <item android:color="#B0F5F5F5" /> <!-- Set your default icon color here -->
+
+</selector>

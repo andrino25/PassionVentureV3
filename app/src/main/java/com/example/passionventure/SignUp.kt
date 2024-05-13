@@ -5,9 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.ProgressBar
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -43,22 +45,48 @@ class SignUp : AppCompatActivity() {
             openGalleryForImage()
         }
 
+        val roleGroup = findViewById<RadioGroup>(R.id.roleGroup)
+        val professionSpinner = findViewById<Spinner>(R.id.professionSpinner)
+
+        roleGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId == R.id.mentorRButton) {
+                professionSpinner.visibility = View.VISIBLE
+            } else {
+                professionSpinner.visibility = View.GONE
+            }
+        }
+
+        val professionsList = mutableListOf(
+            "Select a profession",
+            "Software Engineer",
+            "Data Scientist",
+            "Product Manager",
+            "UX/UI Designer",
+            "Digital Marketer",
+            "Financial Analyst",
+            "Project Manager",
+            "Business Consultant",
+            "Sales Manager",
+            "Michelin Chef",
+            "Human Resources Manager"
+        )
 
 
-        // Sign Up Button and other views setup...
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, professionsList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        professionSpinner.adapter = adapter
 
         val signUpButton = findViewById<AppCompatButton>(R.id.button)
         signUpButton.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
             val name = findViewById<TextInputEditText>(R.id.nameEt).text.toString().trim()
             val email = findViewById<TextInputEditText>(R.id.emailEt).text.toString().trim()
             val contact = findViewById<TextInputEditText>(R.id.contactEt).text.toString().trim()
             val username = findViewById<TextInputEditText>(R.id.userNameEt).text.toString().trim()
             val password = findViewById<TextInputEditText>(R.id.passET).text.toString().trim()
             val confirmPassword = findViewById<TextInputEditText>(R.id.confirmPassEt).text.toString().trim()
+
             val userCategory = findViewById<RadioGroup>(R.id.roleGroup)
 
-            // Check if any radio button is selected
             if (userCategory.checkedRadioButtonId == -1) {
                 Toast.makeText(this@SignUp, "Please select a role.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -77,17 +105,25 @@ class SignUp : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Check if the username already exists in the database
+            val profession = if (userCategoryText == "Mentor") {
+                professionSpinner.selectedItem.toString()
+            } else {
+                "None"
+            }
+
+            if (userCategoryText == "Mentor" && profession == "Select a profession") {
+                Toast.makeText(this@SignUp, "Please select a valid profession.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             databaseReference.orderByChild("username").equalTo(username)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
                         if (snapshot.exists()) {
-                            // Username already exists
                             Toast.makeText(this@SignUp, "Username already exists. Please choose a different one.", Toast.LENGTH_SHORT).show()
                         } else {
-                            // Username doesn't exist, proceed with registration
-                            // Upload the image to Firebase Storage
-                            uploadImageToStorage(name, email, contact, username, password, userCategoryText)
+                            progressBar.visibility = View.VISIBLE
+                            uploadImageToStorage(name, email, contact, username, password, userCategoryText, profession)
                         }
                     }
 
@@ -112,23 +148,21 @@ class SignUp : AppCompatActivity() {
         }
     }
 
-    private fun uploadImageToStorage(name: String, email: String, contact: String, username: String, password: String, userCategory: String) {
+    private fun uploadImageToStorage(name: String, email: String, contact: String, username: String, password: String, userCategory: String, profession: String) {
         selectedImageUri?.let { uri ->
-            progressBar.visibility = View.VISIBLE
             val imageRef = storageReference.child("${System.currentTimeMillis()}_${uri.lastPathSegment}")
             val uploadTask = imageRef.putFile(uri)
+
+            // Show progress bar before starting the upload task
+            progressBar.visibility = View.VISIBLE
+
             uploadTask.addOnSuccessListener { taskSnapshot ->
-                // Image upload success
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
-                    // Get the download URL
                     val imageUrl = uri.toString()
-                    // Create a User object
-                    val user = User(name, email, contact, username, password, userCategory, imageUrl)
-                    // Push the user data to the Firebase Realtime Database
+                    val user = User(name, email, contact, username, password, userCategory, imageUrl, profession)
                     databaseReference.push().setValue(user)
                         .addOnSuccessListener {
                             Toast.makeText(this@SignUp, "Registration Successful!", Toast.LENGTH_SHORT).show()
-                            // Navigate to sign in activity or do any other necessary action
                             val intent = Intent(this@SignUp, SignInView::class.java)
                             startActivity(intent)
                         }
@@ -137,8 +171,10 @@ class SignUp : AppCompatActivity() {
                         }
                 }
             }.addOnFailureListener { e ->
-                // Image upload failed
                 Toast.makeText(this@SignUp, "Failed to upload image: ${e.message}", Toast.LENGTH_SHORT).show()
+            }.addOnCompleteListener {
+                // Hide progress bar after the upload task completes (whether successful or not)
+                progressBar.visibility = View.GONE
             }
         }
     }

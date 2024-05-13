@@ -16,4 +16,9 @@
         <item name="cornerSize">80dp</item>
     </style>
 
+    <style name="rounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>

@@ -62,6 +62,19 @@
                 android:layout_marginStart="20dp"/>
 
         </RadioGroup>
+
+        <!-- Mentor Profession Dropdown -->
+        <Spinner
+            android:id="@+id/professionSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@id/roleGroup"
+            android:layout_marginTop="20dp"
+            android:background="@color/white"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone" />
+
         <!-- Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameLayout"
@@ -69,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_below="@id/roleGroup"
+            android:layout_below="@id/professionSpinner"
             android:layout_marginTop="20dp"
             app:boxStrokeColor="#4E036E"
             app:hintTextColor="#4E036E">
@@ -158,7 +171,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/userNameLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="30dp"
             app:boxStrokeColor="#4E036E"
             app:hintTextColor="#4E036E"
             app:passwordToggleEnabled="true">
@@ -180,7 +193,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/passwordLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="30dp"
             app:boxStrokeColor="#4E036E"
             app:hintTextColor="#4E036E"
             app:passwordToggleEnabled="true">
@@ -202,7 +215,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/confirmPasswordLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:background="#E3A702"
             android:text="Sign Up"
             android:textColor="@color/white"
