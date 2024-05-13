@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "911646536282",
+    "project_id": "passionventurev3",
+    "storage_bucket": "passionventurev3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:911646536282:android:f6a2998c2b54659cc35e63",
+        "android_client_info": {
+          "package_name": "com.example.passionventure"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXpX-PtQGy3Za3aT8hQU47WK7POMko2pY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
