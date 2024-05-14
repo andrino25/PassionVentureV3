@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.Toast
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
@@ -14,6 +13,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import android.app.ProgressDialog
 import android.widget.TextView
+import com.google.android.material.imageview.ShapeableImageView
 
 class ProfileView : AppCompatActivity() {
 
@@ -25,7 +25,7 @@ class ProfileView : AppCompatActivity() {
     private lateinit var emailEditBtn: Button
     private lateinit var numEditBtn: Button
     private lateinit var addEditBtn: Button
-    private lateinit var profileImage: ImageView
+    private lateinit var profileImage: ShapeableImageView
     private lateinit var selectImageButton: Button
     private lateinit var saveButton: TextView
     private lateinit var progressDialog: ProgressDialog
@@ -110,14 +110,17 @@ class ProfileView : AppCompatActivity() {
 
         selectImageButton.setOnClickListener {
             profileImage.isClickable = true
-            Toast.makeText(this@ProfileView, "Profile Image is editable.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@ProfileView, "Profile Image is now editable.", Toast.LENGTH_SHORT).show()
+
+            profileImage.setOnClickListener {
+                if (profileImage.isClickable) {
+                    val intent = Intent(Intent.ACTION_PICK)
+                    intent.type = "image/*"
+                    startActivityForResult(intent, PICK_IMAGE_REQUEST)
+                }
+            }
         }
 
-        profileImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent, PICK_IMAGE_REQUEST)
-        }
 
         saveButton.setOnClickListener {
             val name = nameText.text.toString().trim()
@@ -131,12 +134,27 @@ class ProfileView : AppCompatActivity() {
             }
 
             if (selectedImageUri != null) {
-                uploadImageToStorage(selectedImageUri!!) { uploadedImageUrl ->
-                    updateUserProfile(name, email, phoneNumber, address, uploadedImageUrl)
+                imageUrl?.let { currentImageUrl ->
+                    deleteCurrentImage(currentImageUrl) {
+                        uploadImageToStorage(selectedImageUri!!) { uploadedImageUrl ->
+                            updateUserProfile(name, email, phoneNumber, address, uploadedImageUrl)
+                        }
+                    }
+                } ?: run {
+                    uploadImageToStorage(selectedImageUri!!) { uploadedImageUrl ->
+                        updateUserProfile(name, email, phoneNumber, address, uploadedImageUrl)
+                    }
                 }
             } else {
                 updateUserProfile(name, email, phoneNumber, address, imageUrl)
             }
+
+            nameText.isEnabled = false
+            numText.isEnabled = false
+            emailText.isEnabled = false
+            addEdit.isEnabled = false
+
+            profileImage.isClickable = false
         }
     }
 
@@ -186,6 +204,17 @@ class ProfileView : AppCompatActivity() {
                 Toast.makeText(this@ProfileView, "Failed to update user data.", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun deleteCurrentImage(imageUrl: String, callback: () -> Unit) {
+        val imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+        imageRef.delete().addOnSuccessListener {
+            Toast.makeText(this@ProfileView, "Previous image deleted.", Toast.LENGTH_SHORT).show()
+            callback()
+        }.addOnFailureListener {
+            Toast.makeText(this@ProfileView, "Failed to delete previous image.", Toast.LENGTH_SHORT).show()
+            callback() // Proceed to upload new image even if delete fails
+        }
     }
 
     companion object {

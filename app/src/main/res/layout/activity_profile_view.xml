@@ -132,6 +132,7 @@
                     android:enabled="false"
                     android:text="Earl Brando Andrino"
                     android:textColor="@color/white"
+                    android:singleLine="true"
                     android:textSize="14dp"
                     tools:ignore="TextSizeCheck,TouchTargetSizeCheck" />
 
@@ -179,6 +180,7 @@
                     android:layout_marginEnd="5dp"
                     android:layout_marginBottom="5dp"
                     android:enabled="false"
+                    android:singleLine="true"
                     android:text="earlbrandx@gmail.com"
                     android:textColor="@color/white"
                     android:textSize="14dp"
@@ -231,6 +233,7 @@
                     android:text="09686117835"
                     android:textColor="@color/white"
                     android:textSize="14dp"
+                    android:singleLine="true"
                     tools:ignore="TextSizeCheck,TouchTargetSizeCheck" />
 
                 <Button
@@ -279,6 +282,7 @@
                     android:enabled="false"
                     android:text="Sudlon Maguikay Mandaue City"
                     android:textColor="@color/white"
+                    android:singleLine="true"
                     android:textSize="14dp"
                     tools:ignore="TouchTargetSizeCheck,TextSizeCheck" />
 
