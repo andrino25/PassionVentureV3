@@ -1,6 +1,7 @@
 package com.example.passionventure
 
 import User
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -52,8 +53,12 @@ class SignInView : AppCompatActivity() {
                                 val user = userSnapshot.getValue(User::class.java)
                                 if (user?.password == password) {
                                     if (user.role == "Enthusiast") {
+
+                                        // Start EnthusiastHomePage activity
                                         val intent = Intent(this@SignInView, EnthusiastHomePage::class.java)
+                                        intent.putExtra("username", user.username)
                                         startActivity(intent)
+
                                     } else if (user.role == "Mentor") {
                                         val intent = Intent(this@SignInView, EnthusiastHomePage::class.java)
                                         startActivity(intent)

@@ -8,15 +8,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passionventure.MentorAdapter
 import com.example.passionventure.databinding.FragmentMatchingBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class MatchingFragment : Fragment() {
-
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var mentorsAdapter: MentorAdapter
-    private lateinit var mentorsList: MutableList<User>
 
     private var _binding: FragmentMatchingBinding? = null
 
@@ -35,6 +36,7 @@ class MatchingFragment : Fragment() {
         _binding = FragmentMatchingBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+
         val textView: TextView = binding.textDashboard
         matchingViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
@@ -46,4 +48,5 @@ class MatchingFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

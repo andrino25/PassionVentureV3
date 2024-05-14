@@ -11,6 +11,52 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <ImageView
+            android:id="@+id/logoImageView"
+            android:layout_width="match_parent"
+            android:layout_height="148dp"
+            android:layout_marginTop="10dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/appNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/logoImageView"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="10dp"
+            android:text="PassionVenture"
+            android:textColor="@color/white"
+            android:textSize="32sp" />
+
+        <TextView
+            android:id="@+id/welcomeBackTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/appNameTextView"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="10dp"
+            android:text="Welcome to the community"
+            android:gravity="center"
+            android:layout_marginHorizontal="10dp"
+            android:textColor="#d19e13"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/signUpTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/welcomeBackTextView"
+            android:layout_centerHorizontal="true"
+            android:paddingTop="1dp"
+            android:text="Sign up to Continue!"
+            android:textColor="#d19e13"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+
         <!-- Profile hehe -->
 
         <com.google.android.material.imageview.ShapeableImageView
@@ -18,9 +64,11 @@
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="50dp"
             android:src="@drawable/default_profile"
             app:shapeAppearanceOverlay="@style/roundedImageView"
+            android:layout_below="@id/signUpTextView"
+
             />
 
         <TextView
@@ -67,12 +115,12 @@
         <Spinner
             android:id="@+id/professionSpinner"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="55dp"
             android:layout_below="@id/roleGroup"
             android:layout_marginTop="20dp"
-            android:background="@color/white"
+            android:background="#F5F5F5"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:visibility="gone" />
 
         <!-- Name -->
@@ -93,6 +141,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                android:background="#F5F5F5"
                 android:hint="Name" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -116,6 +165,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
+                android:background="#F5F5F5"
                 android:singleLine="true"
                 android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -137,18 +187,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Contact"
+                android:background="#F5F5F5"
                 android:singleLine="true"
                 android:inputType="number"
                 android:digits="0123456789"
                 android:maxLength="11"/>
         </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/addressLayout"
+            style="@style/LoginTextInputOuterFieldStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/contactLayout"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="30dp"
+            app:boxStrokeColor="#4E036E"
+            app:hintTextColor="#4E036E">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/addressEt"
+                style="@style/LoginTextInputInnerFieldStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Address"
+                android:background="#F5F5F5"
+                android:singleLine="true"
+                android:inputType="text"
+                android:digits="0123456789"
+                android:maxLength="11"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Username -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/userNameLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/contactLayout"
+            android:layout_below="@id/addressLayout"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="30dp"
             app:boxStrokeColor="#4E036E"
@@ -160,6 +236,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
+                android:background="#F5F5F5"
                 android:hint="Username" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -182,6 +259,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
+                android:background="#F5F5F5"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -204,6 +282,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Confirm Password"
+                android:background="#F5F5F5"
                 android:singleLine="true"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -215,7 +294,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/confirmPasswordLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="30dp"
             android:background="#E3A702"
             android:text="Sign Up"
             android:textColor="@color/white"

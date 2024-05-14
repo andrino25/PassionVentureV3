@@ -10,6 +10,7 @@ import android.widget.ProgressBar
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
@@ -35,6 +36,12 @@ class SignUp : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+
+        val toSignIn = findViewById<TextView>(R.id.toSignIn)
+        toSignIn.setOnClickListener {
+            val intent = Intent(this, SignInView::class.java)
+            startActivity(intent)
+        }
 
         databaseReference = FirebaseDatabase.getInstance().reference.child("users")
         storageReference = FirebaseStorage.getInstance().reference.child("profile_images")
@@ -83,6 +90,7 @@ class SignUp : AppCompatActivity() {
             val contact = findViewById<TextInputEditText>(R.id.contactEt).text.toString().trim()
             val username = findViewById<TextInputEditText>(R.id.userNameEt).text.toString().trim()
             val password = findViewById<TextInputEditText>(R.id.passET).text.toString().trim()
+            val address = findViewById<TextInputEditText>(R.id.addressEt).text.toString().trim()
             val confirmPassword = findViewById<TextInputEditText>(R.id.confirmPassEt).text.toString().trim()
 
             val userCategory = findViewById<RadioGroup>(R.id.roleGroup)
@@ -95,7 +103,7 @@ class SignUp : AppCompatActivity() {
             val selectedRadioButton = findViewById<RadioButton>(userCategory.checkedRadioButtonId)
             val userCategoryText = selectedRadioButton.text.toString()
 
-            if (name.isEmpty() || email.isEmpty() || contact.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || contact.isEmpty() || username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || address.isEmpty()) {
                 Toast.makeText(this@SignUp, "Please fill in all the fields.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -123,7 +131,7 @@ class SignUp : AppCompatActivity() {
                             Toast.makeText(this@SignUp, "Username already exists. Please choose a different one.", Toast.LENGTH_SHORT).show()
                         } else {
                             progressBar.visibility = View.VISIBLE
-                            uploadImageToStorage(name, email, contact, username, password, userCategoryText, profession)
+                            uploadImageToStorage(name, email, contact, username, password, userCategoryText, profession, address)
                         }
                     }
 
@@ -148,7 +156,7 @@ class SignUp : AppCompatActivity() {
         }
     }
 
-    private fun uploadImageToStorage(name: String, email: String, contact: String, username: String, password: String, userCategory: String, profession: String) {
+    private fun uploadImageToStorage(name: String, email: String, contact: String, username: String, password: String, userCategory: String, profession: String, address: String) {
         selectedImageUri?.let { uri ->
             val imageRef = storageReference.child("${System.currentTimeMillis()}_${uri.lastPathSegment}")
             val uploadTask = imageRef.putFile(uri)
@@ -159,7 +167,7 @@ class SignUp : AppCompatActivity() {
             uploadTask.addOnSuccessListener { taskSnapshot ->
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()
-                    val user = User(name, email, contact, username, password, userCategory, imageUrl, profession)
+                    val user = User(name, email, contact, username, password, userCategory, address, imageUrl, profession) // Include address in User object
                     databaseReference.push().setValue(user)
                         .addOnSuccessListener {
                             Toast.makeText(this@SignUp, "Registration Successful!", Toast.LENGTH_SHORT).show()

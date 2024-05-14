@@ -7,12 +7,56 @@
     android:background="#34013f"
     tools:context=".SignInView">
 
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="match_parent"
+        android:layout_height="148dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/appNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/logoImageView"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="10dp"
+        android:text="PassionVenture"
+        android:textColor="@color/white"
+        android:textSize="32sp" />
+
+    <TextView
+        android:id="@+id/welcomeBackTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appNameTextView"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="20dp"
+        android:text="Welcome back!"
+        android:textColor="#d19e13"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/signUpTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcomeBackTextView"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="1dp"
+        android:text="Sign in to Continue!"
+        android:textColor="#d19e13"
+        android:textSize="30sp"
+        android:textStyle="bold" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/userNameLayout"
         style="@style/LoginTextInputOuterFieldStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:layout_below="@id/signUpTextView"
         app:boxStrokeColor="#4E036E"
         app:hintTextColor="#4E036E">
 
@@ -22,6 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Username"
+            android:background="#F5F5F5"
             android:layout_marginTop="30dp"
             android:inputType="text"
             android:layout_marginBottom="20dp"/>
@@ -45,6 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
+            android:background="#F5F5F5"
             android:inputType="textPassword"
             android:layout_marginBottom="20dp"/>
     </com.google.android.material.textfield.TextInputLayout>
