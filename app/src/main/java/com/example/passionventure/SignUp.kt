@@ -113,6 +113,11 @@ class SignUp : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            if (selectedImageUri == null) {
+                Toast.makeText(this@SignUp, "Please select a profile image.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val profession = if (userCategoryText == "Mentor") {
                 professionSpinner.selectedItem.toString()
             } else {
