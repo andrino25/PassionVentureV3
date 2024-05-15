@@ -4,6 +4,9 @@ import User
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputFilter
+import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.ProgressBar
@@ -16,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -23,7 +27,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.firebase.storage.UploadTask
 
 class SignUp : AppCompatActivity() {
 
@@ -31,7 +34,7 @@ class SignUp : AppCompatActivity() {
     private lateinit var storageReference: StorageReference
     private lateinit var profileImage: ShapeableImageView
     private var selectedImageUri: Uri? = null
-    private lateinit var progressBar : ProgressBar
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +46,34 @@ class SignUp : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Counter of words
+        val descriptionEt = findViewById<TextInputEditText>(R.id.descriptionEt)
+        val wordCountTextView = findViewById<TextView>(R.id.wordCountTextView)
+
+        descriptionEt.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                // Calculate the number of words
+                val words = s?.trim()?.split("\\s+".toRegex())?.size ?: 0
+                wordCountTextView.text = "$words/100" // Update the word count TextView
+
+                // If the word count exceeds 100, display a toast and remove the last typed word
+                if (words > 100) {
+                    Toast.makeText(this@SignUp, "Maximum word limit reached", Toast.LENGTH_SHORT).show()
+                    val lastSpaceIndex = s.toString().lastIndexOf(" ")
+                    // Remove the last word from the EditText
+                    if (lastSpaceIndex != -1) {
+                        descriptionEt.setText(s?.delete(lastSpaceIndex, s.length))
+                        descriptionEt.setSelection(descriptionEt.text?.length ?: 0) // Move cursor to end
+                    }
+                }
+            }
+        })
+
+        // Initialize Firebase references
         databaseReference = FirebaseDatabase.getInstance().reference.child("users")
         storageReference = FirebaseStorage.getInstance().reference.child("profile_images")
         profileImage = findViewById(R.id.profileImage)
@@ -54,12 +85,15 @@ class SignUp : AppCompatActivity() {
 
         val roleGroup = findViewById<RadioGroup>(R.id.roleGroup)
         val professionSpinner = findViewById<Spinner>(R.id.professionSpinner)
+        val descriptionLayout = findViewById<TextInputLayout>(R.id.descriptionLayout)
 
         roleGroup.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId == R.id.mentorRButton) {
                 professionSpinner.visibility = View.VISIBLE
+                descriptionLayout.visibility = View.VISIBLE
             } else {
                 professionSpinner.visibility = View.GONE
+                descriptionLayout.visibility = View.GONE
             }
         }
 
@@ -78,20 +112,48 @@ class SignUp : AppCompatActivity() {
             "Human Resources Manager"
         )
 
-
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, professionsList)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         professionSpinner.adapter = adapter
 
+        // Custom InputFilter to disallow emojis and show a toast message
+        val emojiFilter = InputFilter { source, start, end, dest, dstart, dend ->
+            for (index in start until end) {
+                val type = Character.getType(source[index].toInt())
+                if (type == Character.SURROGATE.toInt() || type == Character.OTHER_SYMBOL.toInt()) {
+                    return@InputFilter ""
+                }
+            }
+            null
+        }
+
+        // Apply InputFilter to disallow emojis in input fields
+        val nameEt = findViewById<TextInputEditText>(R.id.nameEt)
+        val emailEt = findViewById<TextInputEditText>(R.id.emailEt)
+        val contactEt = findViewById<TextInputEditText>(R.id.contactEt)
+        val usernameEt = findViewById<TextInputEditText>(R.id.userNameEt)
+        val passwordEt = findViewById<TextInputEditText>(R.id.passET)
+        val confirmPasswordEt = findViewById<TextInputEditText>(R.id.confirmPassEt)
+        val addressEt = findViewById<TextInputEditText>(R.id.addressEt)
+
+        nameEt.filters = arrayOf(emojiFilter)
+        emailEt.filters = arrayOf(emojiFilter)
+        usernameEt.filters = arrayOf(emojiFilter)
+        passwordEt.filters = arrayOf(emojiFilter)
+        confirmPasswordEt.filters = arrayOf(emojiFilter)
+        addressEt.filters = arrayOf(emojiFilter)
+        descriptionEt.filters = arrayOf(emojiFilter)
+
         val signUpButton = findViewById<AppCompatButton>(R.id.button)
         signUpButton.setOnClickListener {
-            val name = findViewById<TextInputEditText>(R.id.nameEt).text.toString().trim()
-            val email = findViewById<TextInputEditText>(R.id.emailEt).text.toString().trim()
-            val contact = findViewById<TextInputEditText>(R.id.contactEt).text.toString().trim()
-            val username = findViewById<TextInputEditText>(R.id.userNameEt).text.toString().trim()
-            val password = findViewById<TextInputEditText>(R.id.passET).text.toString().trim()
-            val address = findViewById<TextInputEditText>(R.id.addressEt).text.toString().trim()
-            val confirmPassword = findViewById<TextInputEditText>(R.id.confirmPassEt).text.toString().trim()
+            val name = nameEt.text.toString().trim()
+            val email = emailEt.text.toString().trim()
+            val contact = contactEt.text.toString().trim()
+            val username = usernameEt.text.toString().trim()
+            val password = passwordEt.text.toString().trim()
+            val address = addressEt.text.toString().trim()
+            val confirmPassword = confirmPasswordEt.text.toString().trim()
+            var description = descriptionEt.text.toString().trim()
 
             val userCategory = findViewById<RadioGroup>(R.id.roleGroup)
 
@@ -118,15 +180,26 @@ class SignUp : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            if (userCategoryText == "Mentor") {
+                if (professionSpinner.selectedItem.toString() == "Select a profession") {
+                    Toast.makeText(this@SignUp, "Please select a valid profession.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                if (description.isEmpty()) {
+                    descriptionLayout.error = "Please enter a description."
+                    return@setOnClickListener
+                } else {
+                    descriptionLayout.error = null
+                }
+            } else {
+                description = "None"
+            }
+
             val profession = if (userCategoryText == "Mentor") {
                 professionSpinner.selectedItem.toString()
             } else {
                 "None"
-            }
-
-            if (userCategoryText == "Mentor" && profession == "Select a profession") {
-                Toast.makeText(this@SignUp, "Please select a valid profession.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
             }
 
             databaseReference.orderByChild("username").equalTo(username)
@@ -136,7 +209,7 @@ class SignUp : AppCompatActivity() {
                             Toast.makeText(this@SignUp, "Username already exists. Please choose a different one.", Toast.LENGTH_SHORT).show()
                         } else {
                             progressBar.visibility = View.VISIBLE
-                            uploadImageToStorage(name, email, contact, username, password, userCategoryText, profession, address)
+                            uploadImageToStorage(name, email, contact, username, password, userCategoryText, profession, address, description)
                         }
                     }
 
@@ -161,7 +234,7 @@ class SignUp : AppCompatActivity() {
         }
     }
 
-    private fun uploadImageToStorage(name: String, email: String, contact: String, username: String, password: String, userCategory: String, profession: String, address: String) {
+    private fun uploadImageToStorage(name: String, email: String, contact: String, username: String, password: String, userCategory: String, profession: String, address: String, description: String) {
         selectedImageUri?.let { uri ->
             val imageRef = storageReference.child("${System.currentTimeMillis()}_${uri.lastPathSegment}")
             val uploadTask = imageRef.putFile(uri)
@@ -172,7 +245,7 @@ class SignUp : AppCompatActivity() {
             uploadTask.addOnSuccessListener { taskSnapshot ->
                 imageRef.downloadUrl.addOnSuccessListener { uri ->
                     val imageUrl = uri.toString()
-                    val user = User(name, email, contact, username, password, userCategory, address, imageUrl, profession) // Include address in User object
+                    val user = User(name, email, contact, username, password, userCategory, address, imageUrl, profession, description) // Include address and description in User object
                     databaseReference.push().setValue(user)
                         .addOnSuccessListener {
                             Toast.makeText(this@SignUp, "Registration Successful!", Toast.LENGTH_SHORT).show()
@@ -190,6 +263,12 @@ class SignUp : AppCompatActivity() {
                 progressBar.visibility = View.GONE
             }
         }
+    }
+
+    // Function to check if the input contains emojis
+    private fun containsEmoji(text: String): Boolean {
+        val emojiRegex = Regex("[\\p{So}\\p{Cs}]")
+        return emojiRegex.containsMatchIn(text)
     }
 
     companion object {

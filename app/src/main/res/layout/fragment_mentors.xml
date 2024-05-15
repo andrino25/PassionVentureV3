@@ -4,87 +4,67 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.MentorsFragment"
+    tools:context=".ui.mentor.MentorsFragment"
     android:paddingTop="?attr/actionBarSize">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <TextView
-            android:id="@+id/text_home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:layout_alignParentStart="true"
-            android:visibility="invisible"/>
-
-        <TextView
-            android:id="@+id/user"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:textSize="40sp"
-            android:textStyle="bold"
-            android:text="Hello User"
-            android:visibility="invisible"/>
-        <TextView
-            android:id="@+id/TitleTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:fontFamily="serif"
-            android:text="Mentors"
-            android:textColor="@color/black"
-            android:layout_below="@id/user"
-            android:textSize="40sp"
-            android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/searchTab"
-            android:layout_width="match_parent"
-            android:layout_marginHorizontal="20dp"
-            android:layout_height="50dp"
-            android:hint="Search a mentor"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:layout_below="@id/TitleTextView"
-            android:padding="10dp"
-            android:background="@drawable/rounded_corners" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/searchTab">
 
             <TextView
-                android:id="@+id/textView1"
+                android:id="@+id/text_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:layout_alignParentStart="true"
+                android:visibility="invisible"/>
+
+            <TextView
+                android:id="@+id/TitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:fontFamily="serif"
-                android:text="Discover Success with the World's Best Mentors"
+                android:text="Mentors"
                 android:textColor="@color/black"
-                android:textSize="26sp"
-                android:gravity="center"
-                android:textStyle="bold"/>
+                android:textSize="40sp"
+                android:textStyle="bold" />
 
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/textView1"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginTop="20dp"
+            <EditText
+                android:id="@+id/searchTab"
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="20dp"
+                android:layout_height="50dp"
+                android:hint="Search a mentor"
                 android:layout_centerHorizontal="true"
-                tools:listitem="@layout/mentors_list"/>
+                android:layout_marginTop="30dp"
+                android:layout_below="@id/TitleTextView"
+                android:padding="10dp"
+                android:background="@drawable/rounded_corners" />
+
+                <TextView
+                    android:id="@+id/textView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_below="@id/searchTab"
+                    android:fontFamily="serif"
+                    android:text="Discover Success with the World's Best Mentors"
+                    android:textColor="@color/black"
+                    android:textSize="26sp"
+                    android:gravity="center"
+                    android:textStyle="bold"/>
+
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/textView1"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    tools:listitem="@layout/mentors_list"
+                    android:layout_marginBottom="80dp"/>
 
         </RelativeLayout>
-
-    </RelativeLayout>
-
-</RelativeLayout>

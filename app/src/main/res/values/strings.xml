@@ -94,4 +94,5 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_enthusiast_home_page">EnthusiastHomePage</string>
+    <string name="title_activity_mentor_home_page">MentorHomePage</string>
 </resources>

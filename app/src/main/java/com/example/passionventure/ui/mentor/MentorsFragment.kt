@@ -1,4 +1,4 @@
-package com.example.passionventure.ui.home
+package com.example.passionventure.ui.mentor
 
 import User
 import android.os.Bundle

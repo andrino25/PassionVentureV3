@@ -1,18 +1,15 @@
 package com.example.passionventure
 
 import User
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputFilter
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class SignInView : AppCompatActivity() {
 
@@ -34,10 +31,28 @@ class SignInView : AppCompatActivity() {
             startActivity(intent)
         }
 
+        val usernameEt = findViewById<TextInputEditText>(R.id.userNameEt)
+        val passwordEt = findViewById<TextInputEditText>(R.id.passET)
         val signInButton = findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.button)
+
+        // Custom InputFilter to disallow emojis and show a toast message
+        val emojiFilter = InputFilter { source, start, end, dest, dstart, dend ->
+            for (index in start until end) {
+                val type = Character.getType(source[index].toInt())
+                if (type == Character.SURROGATE.toInt() || type == Character.OTHER_SYMBOL.toInt()) {
+                    return@InputFilter ""
+                }
+            }
+            null
+        }
+
+        // Apply InputFilter to disallow emojis in input fields
+        usernameEt.filters = arrayOf(emojiFilter)
+        passwordEt.filters = arrayOf(emojiFilter)
+
         signInButton.setOnClickListener {
-            val username = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.userNameEt).text.toString().trim()
-            val password = findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.passET).text.toString().trim()
+            val username = usernameEt.text.toString().trim()
+            val password = passwordEt.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show()
@@ -53,14 +68,13 @@ class SignInView : AppCompatActivity() {
                                 val user = userSnapshot.getValue(User::class.java)
                                 if (user?.password == password) {
                                     if (user.role == "Enthusiast") {
-
                                         // Start EnthusiastHomePage activity
                                         val intent = Intent(this@SignInView, EnthusiastHomePage::class.java)
                                         intent.putExtra("username", user.username)
                                         startActivity(intent)
-
                                     } else if (user.role == "Mentor") {
-                                        val intent = Intent(this@SignInView, EnthusiastHomePage::class.java)
+                                        val intent = Intent(this@SignInView, MentorHomePage::class.java)
+                                        intent.putExtra("username", user.username)
                                         startActivity(intent)
                                     }
                                     return
@@ -77,6 +91,5 @@ class SignInView : AppCompatActivity() {
                     }
                 })
         }
-
     }
 }

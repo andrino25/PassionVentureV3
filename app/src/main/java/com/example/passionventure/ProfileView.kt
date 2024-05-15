@@ -12,6 +12,11 @@ import com.squareup.picasso.Picasso
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import android.app.ProgressDialog
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import android.widget.TextView
 import com.google.android.material.imageview.ShapeableImageView
 
@@ -30,6 +35,11 @@ class ProfileView : AppCompatActivity() {
     private lateinit var saveButton: TextView
     private lateinit var progressDialog: ProgressDialog
     private lateinit var username: String
+    private lateinit var descriptionText: EditText
+    private lateinit var editDescriptionBtn: Button
+    private lateinit var descriptionLayout: RelativeLayout
+    private lateinit var wordCountTextView: TextView
+    private lateinit var progressBar: ProgressBar
 
     private var imageUrl: String? = null
     private var storageReference: StorageReference? = null
@@ -39,6 +49,12 @@ class ProfileView : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_view)
 
+        val backBtn = findViewById<Button>(R.id.BtnBack)
+        backBtn.setOnClickListener {
+            onBackPressed()
+        }
+
+
         nameText = findViewById(R.id.nameText)
         emailText = findViewById(R.id.emailText)
         numText = findViewById(R.id.numText)
@@ -46,6 +62,10 @@ class ProfileView : AppCompatActivity() {
         profileImage = findViewById(R.id.imageView)
         saveButton = findViewById(R.id.saveButton)
         progressDialog = ProgressDialog(this)
+        descriptionText = findViewById(R.id.descriptionEditText)
+        editDescriptionBtn = findViewById(R.id.editDescription)
+        descriptionLayout = findViewById(R.id.layout5)
+        progressBar = findViewById(R.id.progressBar)
 
         nameEditBtn = findViewById(R.id.nameEdit)
         emailEditBtn = findViewById(R.id.emailEdit)
@@ -53,6 +73,33 @@ class ProfileView : AppCompatActivity() {
         addEditBtn = findViewById(R.id.editAdd)
         selectImageButton = findViewById(R.id.selectImageButton)
 
+        //word counter being implemented
+        wordCountTextView = findViewById(R.id.wordCountTextView)
+        descriptionText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                val words = s?.trim()?.split("\\s+".toRegex())?.size ?: 0
+                wordCountTextView.text = "$words/100" // Update the word count TextView
+
+                // Display a toast if the word count exceeds 100
+                if (words > 100) {
+                    Toast.makeText(this@ProfileView, "Maximum word limit reached", Toast.LENGTH_SHORT).show()
+                    // Remove the last word to ensure the word count stays within the limit
+                    val lastSpaceIndex: Int? = s?.toString()?.lastIndexOf(" ")
+                    if (lastSpaceIndex != -1 && lastSpaceIndex != null) {
+                        descriptionText.setText(s?.delete(lastSpaceIndex, s.length))
+                        descriptionText.setSelection(descriptionText.text?.length ?: 0) // Move cursor to end
+                    }
+
+                }
+            }
+        })
+
+
+        //use to get thhe username of thhhe user para ma retrieve and iyang corresponding data
         username = intent.getStringExtra("username").toString()
 
         // Initialize Firebase Storage reference
@@ -70,6 +117,8 @@ class ProfileView : AppCompatActivity() {
                     val phoneNumber = userDataSnapshot.child("contact").getValue(String::class.java)
                     val address = userDataSnapshot.child("address").getValue(String::class.java)
                     imageUrl = userDataSnapshot.child("profileImageUrl").getValue(String::class.java)
+                    val role = userDataSnapshot.child("role").getValue(String::class.java)
+                    val description = userDataSnapshot.child("description").getValue(String::class.java)
 
                     nameText.setText(name)
                     emailText.setText(email)
@@ -78,6 +127,11 @@ class ProfileView : AppCompatActivity() {
 
                     if (!imageUrl.isNullOrEmpty()) {
                         Picasso.get().load(imageUrl).into(profileImage)
+                    }
+
+                    if (role == "Mentor") {
+                        descriptionLayout.visibility = View.VISIBLE
+                        descriptionText.setText(description)
                     }
                 }
             }
@@ -108,6 +162,11 @@ class ProfileView : AppCompatActivity() {
             Toast.makeText(this@ProfileView, "Address is editable.", Toast.LENGTH_SHORT).show()
         }
 
+        editDescriptionBtn.setOnClickListener {
+            descriptionText.isEnabled = true
+            Toast.makeText(this@ProfileView, "Description is editable.", Toast.LENGTH_SHORT).show()
+        }
+
         selectImageButton.setOnClickListener {
             profileImage.isClickable = true
             Toast.makeText(this@ProfileView, "Profile Image is now editable.", Toast.LENGTH_SHORT).show()
@@ -121,12 +180,15 @@ class ProfileView : AppCompatActivity() {
             }
         }
 
-
         saveButton.setOnClickListener {
+
+            progressBar.visibility = View.VISIBLE
+
             val name = nameText.text.toString().trim()
             val email = emailText.text.toString().trim()
             val phoneNumber = numText.text.toString().trim()
             val address = addEdit.text.toString().trim()
+            val description = descriptionText.text.toString().trim()
 
             if (name.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || address.isEmpty()) {
                 Toast.makeText(this@ProfileView, "Please fill in all fields.", Toast.LENGTH_SHORT).show()
@@ -137,87 +199,91 @@ class ProfileView : AppCompatActivity() {
                 imageUrl?.let { currentImageUrl ->
                     deleteCurrentImage(currentImageUrl) {
                         uploadImageToStorage(selectedImageUri!!) { uploadedImageUrl ->
-                            updateUserProfile(name, email, phoneNumber, address, uploadedImageUrl)
+                            updateUserProfile(name, email, phoneNumber, address, description, uploadedImageUrl)
                         }
                     }
                 } ?: run {
                     uploadImageToStorage(selectedImageUri!!) { uploadedImageUrl ->
-                        updateUserProfile(name, email, phoneNumber, address, uploadedImageUrl)
+                        updateUserProfile(name, email, phoneNumber, address, description, uploadedImageUrl)
                     }
                 }
             } else {
-                updateUserProfile(name, email, phoneNumber, address, imageUrl)
+                updateUserProfile(name, email, phoneNumber, address, description, imageUrl)
             }
+
 
             nameText.isEnabled = false
             numText.isEnabled = false
             emailText.isEnabled = false
             addEdit.isEnabled = false
-
+            descriptionText.isEnabled = false
             profileImage.isClickable = false
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
-            selectedImageUri = data.data!!
-            profileImage.setImageURI(selectedImageUri)
-        }
-    }
-
-    private fun uploadImageToStorage(imageUri: Uri, callback: (String) -> Unit) {
-        val imageRef = storageReference!!.child(imageUri.lastPathSegment!!)
-        val uploadTask = imageRef.putFile(imageUri)
-
-        uploadTask.addOnSuccessListener { taskSnapshot ->
-            Toast.makeText(this@ProfileView, "New image uploaded to storage.", Toast.LENGTH_SHORT).show()
-            imageRef.downloadUrl.addOnSuccessListener { uri ->
-                callback(uri.toString())
-            }.addOnFailureListener {
-                Toast.makeText(this@ProfileView, "Failed to get download URL of the new image.", Toast.LENGTH_SHORT).show()
-            }
+    private fun deleteCurrentImage(imageUrl: String, onComplete: () -> Unit) {
+        val storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
+        storageRef.delete().addOnSuccessListener {
+            onComplete()
         }.addOnFailureListener {
-            Toast.makeText(this@ProfileView, "Failed to upload new image to storage.", Toast.LENGTH_SHORT).show()
+            onComplete() // Proceed even if deletion fails
         }
     }
 
-    private fun updateUserProfile(name: String, email: String, phoneNumber: String, address: String, imageUrl: String?) {
+    private fun uploadImageToStorage(imageUri: Uri, onComplete: (String) -> Unit) {
+        val fileReference = storageReference?.child("$username.jpg")
+        fileReference?.putFile(imageUri)?.addOnSuccessListener {
+            fileReference.downloadUrl.addOnSuccessListener { uri ->
+                onComplete(uri.toString())
+            }
+        }?.addOnFailureListener {
+            onComplete("")
+        }
+    }
+
+    private fun updateUserProfile(name: String, email: String, phoneNumber: String, address: String, description: String, imageUrl: String?) {
+        val userMap = hashMapOf<String, Any>(
+            "name" to name,
+            "email" to email,
+            "contact" to phoneNumber,
+            "address" to address,
+            "description" to description
+        )
+        imageUrl?.let {
+            userMap["profileImageUrl"] = it
+        }
+
         val databaseReference = FirebaseDatabase.getInstance().reference.child("users")
-        val userRef = databaseReference.orderByChild("username").equalTo(username)
-        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        databaseReference.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    for (childSnapshot in dataSnapshot.children) {
-                        childSnapshot.ref.child("name").setValue(name)
-                        childSnapshot.ref.child("email").setValue(email)
-                        childSnapshot.ref.child("contact").setValue(phoneNumber)
-                        childSnapshot.ref.child("address").setValue(address)
-                        childSnapshot.ref.child("profileImageUrl").setValue(imageUrl)
-
-                        Toast.makeText(this@ProfileView, "User data updated.", Toast.LENGTH_SHORT).show()
+                    val userSnapshot = dataSnapshot.children.first()
+                    userSnapshot.ref.updateChildren(userMap).addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this@ProfileView, "Profile updated successfully.", Toast.LENGTH_SHORT).show()
+                            progressBar.visibility = View.INVISIBLE
+                        } else {
+                            Toast.makeText(this@ProfileView, "Failed to update profile.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(this@ProfileView, "Failed to update user data.", Toast.LENGTH_SHORT).show()
+                // Handle errors
             }
         })
     }
 
-    private fun deleteCurrentImage(imageUrl: String, callback: () -> Unit) {
-        val imageRef = FirebaseStorage.getInstance().getReferenceFromUrl(imageUrl)
-        imageRef.delete().addOnSuccessListener {
-            Toast.makeText(this@ProfileView, "Previous image deleted.", Toast.LENGTH_SHORT).show()
-            callback()
-        }.addOnFailureListener {
-            Toast.makeText(this@ProfileView, "Failed to delete previous image.", Toast.LENGTH_SHORT).show()
-            callback() // Proceed to upload new image even if delete fails
-        }
+    companion object {
+        const val PICK_IMAGE_REQUEST = 1
     }
 
-    companion object {
-        private const val PICK_IMAGE_REQUEST = 1
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.data != null) {
+            selectedImageUri = data.data
+            profileImage.setImageURI(selectedImageUri)
+        }
     }
 }

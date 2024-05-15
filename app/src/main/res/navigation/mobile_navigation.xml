@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_mentors"
-        android:name="com.example.passionventure.ui.home.MentorsFragment"
+        android:name="com.example.passionventure.ui.mentor.MentorsFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_mentors" />
 
     <fragment
         android:id="@+id/navigation_macthing"
-        android:name="com.example.passionventure.ui.dashboard.MatchingFragment"
+        android:name="com.example.passionventure.ui.matching.MatchingFragment"
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_matching" />
 
     <fragment
         android:id="@+id/navigation_resources"
-        android:name="com.example.passionventure.ui.notifications.ResourcesFragment"
+        android:name="com.example.passionventure.ui.resources.ResourcesFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_resources" />
 </navigation>

@@ -6,32 +6,36 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import android.widget.PopupMenu
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.passionventure.databinding.ActivityEnthusiastHomePageBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.example.passionventure.databinding.ActivityMentorHomePageBinding
 
-class EnthusiastHomePage : AppCompatActivity() {
+class MentorHomePage : AppCompatActivity() {
 
-    private lateinit var binding: ActivityEnthusiastHomePageBinding
+    private lateinit var binding: ActivityMentorHomePageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityEnthusiastHomePageBinding.inflate(layoutInflater)
+        binding = ActivityMentorHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+        // Find the Toolbar and set it as the ActionBar
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_enthusiast_home_page)
+        val navController = findNavController(R.id.nav_host_fragment_activity_mentor_home_page)
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_mentors, R.id.navigation_macthing, R.id.navigation_resources
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

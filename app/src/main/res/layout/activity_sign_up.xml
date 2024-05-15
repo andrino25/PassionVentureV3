@@ -123,6 +123,40 @@
             android:layout_marginBottom="10dp"
             android:visibility="gone" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descriptionLayout"
+            style="@style/LoginTextInputOuterFieldStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_below="@id/professionSpinner"
+            android:layout_marginTop="20dp"
+            app:boxStrokeColor="#4E036E"
+            app:hintTextColor="#4E036E"
+            android:visibility="gone">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/descriptionEt"
+                style="@style/LoginTextInputInnerFieldStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F5F5F5"
+                android:hint="Profession Description"
+                android:inputType="textMultiLine"
+                />
+
+            <TextView
+                android:id="@+id/wordCountTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="end"
+                android:text="0/100" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameLayout"
@@ -130,7 +164,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_below="@id/professionSpinner"
+            android:layout_below="@id/descriptionLayout"
             android:layout_marginTop="20dp"
             app:boxStrokeColor="#4E036E"
             app:hintTextColor="#4E036E">
@@ -144,7 +178,6 @@
                 android:background="#F5F5F5"
                 android:hint="Name" />
         </com.google.android.material.textfield.TextInputLayout>
-
 
 
         <!-- Email -->
