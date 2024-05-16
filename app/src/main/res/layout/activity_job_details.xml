@@ -7,16 +7,16 @@
     android:background="#F5F5F5"
     tools:context=".JobDetails">
 
-
+    <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="#34013f"
         android:elevation="4dp"
-        android:layout_marginBottom="20dp"
         android:layout_alignParentTop="true">
 
+        <!-- Back Button -->
         <RelativeLayout
             android:id="@+id/toolbarContainer"
             android:layout_width="match_parent"
@@ -47,58 +47,257 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/jobDesc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Job Description"
-        android:layout_below="@id/toolbar"
-        android:textSize="18sp"
-        android:layout_margin="10dp"
-        android:textStyle="bold" />
-
-    <View
-        android:id="@+id/line1"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/jobDesc"
-        android:layout_marginTop="8dp"
-        android:background= "@color/black" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
 
-    <TextView
-        android:id="@+id/jobCompany"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/line1"
-        android:layout_marginTop="8dp"
-        android:text="Company"
-        android:layout_margin="10dp"
-        android:textSize="16sp" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/line2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/jobCompany"
-        android:layout_marginTop="8dp"
-        android:background="#000000" />
+            <TextView
+                android:id="@+id/jobTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Job Title"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/jobCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/line2"
-        android:layout_marginTop="8dp"
-        android:text="Category"
-        android:layout_margin="10dp"
-        android:textSize="16sp" />
+            <!-- Divider -->
+            <View
+                android:id="@+id/line0"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/jobTitle"
 
-    <View
-        android:id="@+id/line3"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/jobCategory"
-        android:layout_marginTop="8dp"
-        android:background="#000000" />
+                android:background="@color/black" />
+
+            <!-- Job Company -->
+            <TextView
+                android:id="@+id/jobCompany"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line0"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="@color/black"
+                android:text="Company"
+                android:textSize="16sp" />
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/line2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/jobCompany"
+                android:layout_marginTop="8dp"
+                android:background="#000000" />
+
+            <!-- Job Company -->
+            <TextView
+                android:id="@+id/jobAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line2"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_toRightOf="@id/logo"
+                android:text="Address"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@id/logo"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/line2"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="11dp"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/location" />
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/line9"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/jobAddress"
+                android:layout_marginTop="8dp"
+                android:background="#000000" />
+
+            <!-- Job Category -->
+            <TextView
+                android:id="@+id/jobCategory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line9"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Category"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/line3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/jobCategory"
+                android:layout_marginTop="8dp"
+                android:background="#000000" />
+
+            <!-- Add TextViews for other job details (experience, attainment, salary, company description) here -->
+
+            <!-- Job Experience -->
+            <TextView
+                android:id="@+id/jobExperience"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line3"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Experience"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/line4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/jobExperience"
+                android:layout_marginTop="8dp"
+                android:background="#000000" />
+
+            <!-- Job Attainment -->
+            <TextView
+                android:id="@+id/jobAttainment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line4"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Attainment"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/line5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/jobAttainment"
+                android:layout_marginTop="8dp"
+                android:background="#000000" />
+
+            <!-- Job Salary -->
+            <TextView
+                android:id="@+id/jobSalary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line5"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Salary"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/line6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/jobSalary"
+                android:layout_marginTop="8dp"
+                android:background="#000000" />
+
+            <!-- Company Description -->
+
+            <TextView
+                android:id="@+id/detailsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line6"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:text="Company Background:" />
+            <TextView
+                android:id="@+id/companyDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/detailsTitle"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Company Description"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <!-- Divider -->
+            <View
+                android:id="@+id/line7"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/companyDescription"
+                android:layout_marginTop="8dp"
+                android:background="#000000" />
+
+            <TextView
+                android:id="@+id/descriptionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line7"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:text="Job Details:" />
+
+
+            <!-- Job Description -->
+            <TextView
+                android:id="@+id/jobDesc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/descriptionTitle"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Job Description"
+                android:textSize="16sp"
+                android:textColor="@color/black"/>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
 
 </RelativeLayout>

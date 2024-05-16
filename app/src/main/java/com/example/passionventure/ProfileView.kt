@@ -117,7 +117,7 @@ class ProfileView : AppCompatActivity() {
                     val phoneNumber = userDataSnapshot.child("contact").getValue(String::class.java)
                     val address = userDataSnapshot.child("address").getValue(String::class.java)
                     imageUrl = userDataSnapshot.child("profileImageUrl").getValue(String::class.java)
-                    val role = userDataSnapshot.child("role").getValue(String::class.java)
+                    val role = userDataSnapshot.child("role").getValue(String::class.java)?.toLowerCase()
                     val description = userDataSnapshot.child("description").getValue(String::class.java)
 
                     nameText.setText(name)
@@ -129,7 +129,8 @@ class ProfileView : AppCompatActivity() {
                         Picasso.get().load(imageUrl).into(profileImage)
                     }
 
-                    if (role == "Mentor") {
+                    if (role == "mentor" || role == "organization") {
+                        // Retrieve and display the description
                         descriptionLayout.visibility = View.VISIBLE
                         descriptionText.setText(description)
                     }

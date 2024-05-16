@@ -1,5 +1,8 @@
 package com.example.passionventure
 
+import Jobs
+import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,33 +10,14 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.passionventure.ui.matching.MatchingFragment
+import com.example.passionventure.ui.mentor.MentorsFragment
+import java.util.Locale
 
-class JobListAdapter(private var jobList: List<JobItem>, private val listener: OnItemClickListener) :
-    RecyclerView.Adapter<JobListAdapter.JobViewHolder>(), Filterable {
+class JobAdapter(private val context: MatchingFragment, private var jobList: List<Jobs>) :
+    RecyclerView.Adapter<JobAdapter.JobViewHolder>(){
 
-    private var filteredJobList = jobList
-
-    inner class JobViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
-        val jobDesc: TextView = itemView.findViewById(R.id.jobDesc)
-        val jobCompany: TextView = itemView.findViewById(R.id.jobCompany)
-        val jobCategory: TextView = itemView.findViewById(R.id.jobCategory)
-
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            val position = adapterPosition
-            if (position != RecyclerView.NO_POSITION) {
-                val selectedItem = filteredJobList[position]
-                listener.onItemClick(selectedItem)
-            }
-        }
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(item: JobItem)
-    }
+    private var filteredJobList: List<Jobs> = jobList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -43,45 +27,49 @@ class JobListAdapter(private var jobList: List<JobItem>, private val listener: O
 
     override fun onBindViewHolder(holder: JobViewHolder, position: Int) {
         val currentItem = filteredJobList[position]
-        holder.jobDesc.text = currentItem.jobDesc
-        holder.jobCompany.text = currentItem.jobCompany
-        holder.jobCategory.text = currentItem.jobCategory
+        holder.bind(currentItem)
     }
 
     override fun getItemCount() = filteredJobList.size
 
-    override fun getFilter(): Filter {
-        return object : Filter() {
-            override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val filteredResults = mutableListOf<JobItem>()
+    inner class JobViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val jobDesc: TextView = itemView.findViewById(R.id.jobDesc)
+        private val jobCompany: TextView = itemView.findViewById(R.id.jobCompany)
+        private val jobCategory: TextView = itemView.findViewById(R.id.jobCategory)
 
-                if (constraint.isNullOrEmpty()) {
-                    filteredResults.addAll(jobList)
-                } else {
-                    val filterPattern = constraint.toString().toLowerCase().trim()
-                    for (item in jobList) {
-                        if (item.jobDesc.toLowerCase().contains(filterPattern) ||
-                            item.jobCompany.toLowerCase().contains(filterPattern) ||
-                            item.jobCategory.toLowerCase().contains(filterPattern)) {
-                            filteredResults.add(item)
-                        }
-                    }
+        fun bind(job: Jobs) {
+            jobDesc.text = job.title
+            jobCompany.text = "✅ ${job.company}"
+            jobCategory.text = "⚫ ${job.category}"
+
+            itemView.setOnClickListener {
+                val intent = Intent(context.requireContext(), JobDetails::class.java).apply {
+                    putExtra("jobTitle", job.title)
+                    putExtra("jobDesc", job.description)
+                    putExtra("jobCompany", job.company)
+                    putExtra("jobCategory", job.category)
+                    putExtra("jobExperience", job.experience)
+                    putExtra("jobAttainment", job.attainment)
+                    putExtra("jobSalary", job.salary)
+                    putExtra("jobAddress", job.companyAddress)
+                    putExtra("companyDescription", job.companyDescription)
                 }
-
-                val results = FilterResults()
-                results.values = filteredResults
-                return results
-            }
-
-            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                filteredJobList = results?.values as List<JobItem>
-                notifyDataSetChanged()
+                context.startActivity(intent)
             }
         }
     }
 
-    fun filterList(filteredList: List<JobItem>) {
-        filteredJobList = filteredList
+
+    fun filter(text: String) {
+        filteredJobList = if (text.isEmpty()) {
+            jobList
+        } else {
+            jobList.filter { job ->
+                job.company.toLowerCase(Locale.getDefault()).contains(text.toLowerCase(Locale.getDefault())) ||
+                        job.category.toLowerCase(Locale.getDefault()).contains(text.toLowerCase(
+                            Locale.getDefault()))
+            }
+        }
         notifyDataSetChanged()
     }
 }

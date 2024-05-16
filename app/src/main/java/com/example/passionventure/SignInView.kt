@@ -71,10 +71,18 @@ class SignInView : AppCompatActivity() {
                                         // Start EnthusiastHomePage activity
                                         val intent = Intent(this@SignInView, EnthusiastHomePage::class.java)
                                         intent.putExtra("username", user.username)
+                                        Toast.makeText(this@SignInView, "Welcome Enthusiast ${user.name}", Toast.LENGTH_SHORT).show()
                                         startActivity(intent)
                                     } else if (user.role == "Mentor") {
                                         val intent = Intent(this@SignInView, MentorHomePage::class.java)
                                         intent.putExtra("username", user.username)
+                                        Toast.makeText(this@SignInView, "Welcome Mentor ${user.name}", Toast.LENGTH_SHORT).show()
+                                        startActivity(intent)
+                                    }
+                                    else if (user.role == "Organization") {
+                                        val intent = Intent(this@SignInView, OrganizationHomePage::class.java)
+                                        intent.putExtra("username", user.username)
+                                        Toast.makeText(this@SignInView, "Welcome ${user.name} Company", Toast.LENGTH_SHORT).show()
                                         startActivity(intent)
                                     }
                                     return

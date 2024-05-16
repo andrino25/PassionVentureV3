@@ -1,10 +1,10 @@
-package com.example.passionventure.ui.dashboard
+package com.example.passionventure.ui.addContribution
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class DashboardViewModel : ViewModel() {
+class addContributionViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
         value = "This is dashboard Fragment"

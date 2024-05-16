@@ -53,25 +53,29 @@ class SignUp : AppCompatActivity() {
         descriptionEt.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-                // Calculate the number of words
-                val words = s?.trim()?.split("\\s+".toRegex())?.size ?: 0
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val words = if (descriptionEt.text?.isNotEmpty() == true) {
+                    s?.trim()?.split("\\s+".toRegex())?.size ?: 0
+                } else {
+                    0
+                }
                 wordCountTextView.text = "$words/100" // Update the word count TextView
 
-                // If the word count exceeds 100, display a toast and remove the last typed word
                 if (words > 100) {
                     Toast.makeText(this@SignUp, "Maximum word limit reached", Toast.LENGTH_SHORT).show()
-                    val lastSpaceIndex = s.toString().lastIndexOf(" ")
+                    val lastSpaceIndex = s?.toString()?.lastIndexOf(" ")
                     // Remove the last word from the EditText
-                    if (lastSpaceIndex != -1) {
-                        descriptionEt.setText(s?.delete(lastSpaceIndex, s.length))
+                    if (lastSpaceIndex != null && lastSpaceIndex != -1) {
+                        val editable = descriptionEt.text
+                        editable?.replace(lastSpaceIndex, s.length, "")
                         descriptionEt.setSelection(descriptionEt.text?.length ?: 0) // Move cursor to end
                     }
                 }
             }
+
+            override fun afterTextChanged(s: Editable?) {}
         })
+
 
         // Initialize Firebase references
         databaseReference = FirebaseDatabase.getInstance().reference.child("users")
@@ -91,9 +95,16 @@ class SignUp : AppCompatActivity() {
             if (checkedId == R.id.mentorRButton) {
                 professionSpinner.visibility = View.VISIBLE
                 descriptionLayout.visibility = View.VISIBLE
-            } else {
+                wordCountTextView.visibility = View.VISIBLE
+            } else if (checkedId == R.id.organizationButton){
+                professionSpinner.visibility = View.GONE
+                descriptionLayout.visibility = View.VISIBLE
+                wordCountTextView.visibility = View.VISIBLE
+            }else {
                 professionSpinner.visibility = View.GONE
                 descriptionLayout.visibility = View.GONE
+                wordCountTextView.visibility = View.GONE
+
             }
         }
 
@@ -187,14 +198,18 @@ class SignUp : AppCompatActivity() {
                 }
 
                 if (description.isEmpty()) {
-                    descriptionLayout.error = "Please enter a description."
+                    Toast.makeText(this@SignUp, "Please enter a description.", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
-                } else {
-                    descriptionLayout.error = null
+                }
+            } else if (userCategoryText == "Organization") {
+                if (description.isEmpty()) {
+                    Toast.makeText(this@SignUp, "Please enter a description for your organization.", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
                 }
             } else {
                 description = "None"
             }
+
 
             val profession = if (userCategoryText == "Mentor") {
                 professionSpinner.selectedItem.toString()

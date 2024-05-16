@@ -5,11 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#34013f"
+    android:layout_gravity="center"
     tools:context=".SignUp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
 
         <ImageView
             android:id="@+id/logoImageView"
@@ -68,7 +71,6 @@
             android:src="@drawable/default_profile"
             app:shapeAppearanceOverlay="@style/roundedImageView"
             android:layout_below="@id/signUpTextView"
-
             />
 
         <TextView
@@ -88,6 +90,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@id/roleTxt"
+            android:layout_marginBottom="10dp"
             android:layout_alignStart="@id/roleTxt">
 
             <RadioButton
@@ -109,6 +112,16 @@
                 android:text="Mentor"
                 android:layout_marginStart="20dp"/>
 
+            <RadioButton
+                android:id="@+id/organizationButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/roleTxt"
+                android:textColor="@color/white"
+                android:layout_below="@id/roleTxt"
+                android:text="Organization"
+                android:layout_marginStart="20dp"/>
+
         </RadioGroup>
 
         <!-- Mentor Profession Dropdown -->
@@ -117,56 +130,74 @@
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:layout_below="@id/roleGroup"
-            android:layout_marginTop="20dp"
-            android:background="#F5F5F5"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_corners"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginBottom="30dp"
             android:visibility="gone" />
 
+        <!-- Description -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/descriptionLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
             android:layout_below="@id/professionSpinner"
-            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
+            android:paddingBottom="15dp"
             app:hintTextColor="#4E036E"
             android:visibility="gone">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/descriptionEt"
-                style="@style/LoginTextInputInnerFieldStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#F5F5F5"
-                android:hint="Profession Description"
-                android:inputType="textMultiLine"
-                />
-
-            <TextView
-                android:id="@+id/wordCountTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
-                android:layout_gravity="end"
-                android:text="0/100" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/descriptionEt"
+                    style="@style/LoginTextInputInnerFieldStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:gravity="top"
+                    android:background="@null"
+                    android:padding="10dp"
+                    android:hint="Description"
+                    android:inputType="textMultiLine" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/wordCountTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_alignEnd="@id/descriptionLayout"
+            android:text="0/100"
+            android:layout_marginTop="-30dp"
+            android:layout_below="@id/descriptionLayout"
+            android:visibility="gone"/>
+
 
         <!-- Name -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nameLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginHorizontal="16dp"
             android:layout_below="@id/descriptionLayout"
-            android:layout_marginTop="20dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
+            android:paddingBottom="15dp"
             app:hintTextColor="#4E036E">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -175,21 +206,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:background="#F5F5F5"
+                android:background="@null"
+                android:paddingLeft="10dp"
                 android:hint="Name" />
         </com.google.android.material.textfield.TextInputLayout>
-
 
         <!-- Email -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/emailLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_below="@id/nameLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
+            android:paddingBottom="15dp"
             app:hintTextColor="#4E036E">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -197,20 +235,28 @@
                 style="@style/LoginTextInputInnerFieldStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:background="#F5F5F5"
                 android:singleLine="true"
-                android:inputType="textEmailAddress" />
+                android:background="@null"
+                android:paddingLeft="10dp"
+                android:hint="Email" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Contact -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/contactLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_below="@id/emailLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:paddingBottom="15dp"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
             app:hintTextColor="#4E036E">
 
@@ -219,23 +265,32 @@
                 style="@style/LoginTextInputInnerFieldStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contact"
-                android:background="#F5F5F5"
                 android:singleLine="true"
+                android:background="@null"
+                android:hint="Contact"
+                android:paddingLeft="10dp"
                 android:inputType="number"
                 android:digits="0123456789"
                 android:maxLength="11"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Address -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/addressLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_below="@id/contactLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
+            android:paddingBottom="15dp"
             app:hintTextColor="#4E036E">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -243,22 +298,30 @@
                 style="@style/LoginTextInputInnerFieldStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Address"
-                android:background="#F5F5F5"
                 android:singleLine="true"
-                android:inputType="text"/>
+                android:background="@null"
+                android:paddingLeft="10dp"
+                android:hint="Address" />
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <!-- Username -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/userNameLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_below="@id/addressLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
+            android:paddingBottom="15dp"
             app:hintTextColor="#4E036E">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -267,7 +330,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:background="#F5F5F5"
+                android:background="@null"
+                android:paddingLeft="10dp"
                 android:hint="Username" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -276,12 +340,19 @@
             android:id="@+id/passwordLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_below="@id/userNameLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
             app:hintTextColor="#4E036E"
+            android:paddingBottom="15dp"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -289,8 +360,10 @@
                 style="@style/LoginTextInputInnerFieldStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:background="@null"
+                android:paddingLeft="10dp"
                 android:hint="Password"
-                android:background="#F5F5F5"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -299,12 +372,19 @@
             android:id="@+id/confirmPasswordLayout"
             style="@style/LoginTextInputOuterFieldStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_below="@id/passwordLayout"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="30dp"
+            android:background="@drawable/rounded_corners"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            app:boxBackgroundMode="none"
             app:boxStrokeColor="#4E036E"
             app:hintTextColor="#4E036E"
+            android:paddingBottom="15dp"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -312,11 +392,15 @@
                 style="@style/LoginTextInputInnerFieldStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Confirm Password"
-                android:background="#F5F5F5"
                 android:singleLine="true"
+                android:background="@null"
+                android:paddingLeft="10dp"
+                android:hint="Confirm Password"
                 android:inputType="textPassword" />
+
+
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <!-- Sign Up Button -->
         <androidx.appcompat.widget.AppCompatButton
@@ -326,14 +410,14 @@
             android:layout_below="@id/confirmPasswordLayout"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="30dp"
-            android:background="#E3A702"
+            android:background="@drawable/button_corners"
             android:text="Sign Up"
             android:textColor="@color/white"
             android:textStyle="bold"
             tools:ignore="TextContrastCheck" />
 
         <ProgressBar
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -346,7 +430,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/progressBar"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="60dp"
             android:layout_centerHorizontal="true">
 
             <TextView

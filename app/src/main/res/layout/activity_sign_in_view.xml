@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#34013f"
-    tools:context=".SignInView">
+    tools:context=".SignInView"
+    android:gravity="center">
 
     <ImageView
         android:id="@+id/logoImageView"
@@ -54,9 +55,15 @@
         android:id="@+id/userNameLayout"
         style="@style/LoginTextInputOuterFieldStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_marginHorizontal="16dp"
         android:layout_below="@id/signUpTextView"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/rounded_corners"
+        app:boxBackgroundMode="none"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:paddingBottom="15dp"
         app:boxStrokeColor="#4E036E"
         app:hintTextColor="#4E036E">
 
@@ -65,11 +72,10 @@
             style="@style/LoginTextInputInnerFieldStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
             android:hint="Username"
-            android:background="#F5F5F5"
-            android:layout_marginTop="30dp"
             android:inputType="text"
-            android:layout_marginBottom="20dp"/>
+            android:background="@null"/>
     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -77,11 +83,16 @@
         android:id="@+id/passwordLayout"
         style="@style/LoginTextInputOuterFieldStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:layout_below="@id/userNameLayout"
         android:layout_marginHorizontal="16dp"
         app:boxStrokeColor="#4E036E"
         app:hintTextColor="#4E036E"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/rounded_corners"
+        app:boxBackgroundMode="none"
+        android:gravity="center"
+        android:paddingBottom="15dp"
         app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -90,9 +101,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:background="#F5F5F5"
-            android:inputType="textPassword"
-            android:layout_marginBottom="20dp"/>
+            android:paddingLeft="10dp"
+            android:background="@null"
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton
@@ -101,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/passwordLayout"
         android:layout_marginHorizontal="16dp"
-        android:background="#E3A702"
+        android:background="@drawable/button_corners"
         android:text="Sign In"
         android:textColor="@color/white"
         android:textStyle="bold"
