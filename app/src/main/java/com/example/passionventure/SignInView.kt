@@ -80,7 +80,7 @@ class SignInView : AppCompatActivity() {
                                         startActivity(intent)
                                     }
                                     else if (user.role == "Organization") {
-                                        val intent = Intent(this@SignInView, OrganizationHomePage::class.java)
+                                        val intent = Intent(this@SignInView, CompanyHomePage::class.java)
                                         intent.putExtra("username", user.username)
                                         Toast.makeText(this@SignInView, "Welcome ${user.name} Company", Toast.LENGTH_SHORT).show()
                                         startActivity(intent)

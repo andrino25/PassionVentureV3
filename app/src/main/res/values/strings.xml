@@ -95,4 +95,7 @@
     </string>
     <string name="title_activity_enthusiast_home_page">EnthusiastHomePage</string>
     <string name="title_activity_mentor_home_page">MentorHomePage</string>
+    <string name="title_activity_company_home_page">CompanyHomePage</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

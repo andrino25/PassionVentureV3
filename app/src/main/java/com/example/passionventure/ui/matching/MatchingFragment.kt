@@ -41,7 +41,7 @@ class MatchingFragment : Fragment() {
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
         jobList = mutableListOf()
-        jobListAdapter = JobAdapter(this, jobList)
+        jobListAdapter = JobAdapter(requireContext(), jobList)
         recyclerView.adapter = jobListAdapter
 
 

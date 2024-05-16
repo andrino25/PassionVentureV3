@@ -14,7 +14,7 @@ import com.example.passionventure.ui.matching.MatchingFragment
 import com.example.passionventure.ui.mentor.MentorsFragment
 import java.util.Locale
 
-class JobAdapter(private val context: MatchingFragment, private var jobList: List<Jobs>) :
+class JobAdapter(private val context: Context, private var jobList: List<Jobs>) :
     RecyclerView.Adapter<JobAdapter.JobViewHolder>(){
 
     private var filteredJobList: List<Jobs> = jobList
@@ -43,7 +43,7 @@ class JobAdapter(private val context: MatchingFragment, private var jobList: Lis
             jobCategory.text = "⚫ ${job.category}"
 
             itemView.setOnClickListener {
-                val intent = Intent(context.requireContext(), JobDetails::class.java).apply {
+                val intent = Intent(context, JobDetails::class.java).apply {
                     putExtra("jobTitle", job.title)
                     putExtra("jobDesc", job.description)
                     putExtra("jobCompany", job.company)

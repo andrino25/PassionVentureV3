@@ -12,27 +12,24 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.passionventure.databinding.ActivityMentorHomePageBinding
+import com.example.passionventure.databinding.ActivityCompanyHomePageBinding
 
-class MentorHomePage : AppCompatActivity() {
+class CompanyHomePage : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMentorHomePageBinding
+    private lateinit var binding: ActivityCompanyHomePageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMentorHomePageBinding.inflate(layoutInflater)
+        binding = ActivityCompanyHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Find the Toolbar and set it as the ActionBar
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_mentor_home_page)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        val navController = findNavController(R.id.nav_host_fragment_activity_company_home_page)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_home, R.id.navigation_dashboard
@@ -40,6 +37,39 @@ class MentorHomePage : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Retrieve username from intent
+        val username = intent.getStringExtra("username")
+
+        // Navigate to HomeFragment and pass username
+        val bundle = Bundle()
+        bundle.putString("username", username)
+        navController.navigate(R.id.navigation_home, bundle)
+
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    // Navigate to HomeFragment and pass username
+                    val username = intent.getStringExtra("username")
+                    val bundle = Bundle()
+                    bundle.putString("username", username)
+                    navController.navigate(R.id.navigation_home, bundle)
+                    true
+                }
+
+                R.id.navigation_dashboard -> {
+                    // Navigate to DashboardFragment and pass username
+                    val username = intent.getStringExtra("username")
+                    val bundle = Bundle()
+                    bundle.putString("username", username)
+                    navController.navigate(R.id.navigation_dashboard, bundle)
+                    true
+                }
+
+                else -> false
+            }
+        }
+
 
         // Set up back button click listener
         val backButton: ImageButton = findViewById(R.id.backButton)
@@ -52,7 +82,6 @@ class MentorHomePage : AppCompatActivity() {
         menuButton.setOnClickListener { view ->
             showPopupMenu(view)
         }
-
     }
 
     private fun showPopupMenu(view: View) {
@@ -60,9 +89,11 @@ class MentorHomePage : AppCompatActivity() {
         popupMenu.menuInflater.inflate(R.menu.main_menu, popupMenu.menu)
 
         // Find the items you want to hide
-        val menuItem1 = popupMenu.menu.findItem(R.id.resources)
+        val menuItem1 = popupMenu.menu.findItem(R.id.messages)
+        val menuItem2 = popupMenu.menu.findItem(R.id.resources)
         // Hide them
         menuItem1.isVisible = false
+        menuItem2.isVisible = false
 
         popupMenu.setOnMenuItemClickListener { menuItem: MenuItem ->
             when (menuItem.itemId) {
@@ -73,12 +104,6 @@ class MentorHomePage : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-
-                R.id.messages -> {
-                    // Handle Messages option click
-                    true
-                }
-
                 R.id.logout -> {
                     val intent = Intent(this, SignInView::class.java)
                     startActivity(intent)

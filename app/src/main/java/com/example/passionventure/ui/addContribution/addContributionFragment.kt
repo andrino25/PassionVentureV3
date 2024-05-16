@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.passionventure.databinding.FragmentDashboardBinding
+import com.example.passionventure.databinding.FragmentAddContributionBinding
 
 class addContributionFragment : Fragment() {
 
-    private var _binding: FragmentDashboardBinding? = null
+    private var _binding: FragmentAddContributionBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -25,13 +25,10 @@ class addContributionFragment : Fragment() {
         val addContributionViewModel =
             ViewModelProvider(this).get(addContributionViewModel::class.java)
 
-        _binding = FragmentDashboardBinding.inflate(inflater, container, false)
+        _binding = FragmentAddContributionBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        val textView: TextView = binding.textDashboard
-        addContributionViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
+
         return root
     }
 
