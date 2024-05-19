@@ -4,6 +4,7 @@ import User
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,10 +43,11 @@ class MentorsFragment : Fragment() {
         _binding = FragmentMentorsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        val currUser = activity?.intent?.getStringExtra("name").toString()
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         mentorsList = mutableListOf()
-        mentorsAdapter = MentorAdapter(this, mentorsList)
+        mentorsAdapter = MentorAdapter(this, mentorsList, currUser)
         recyclerView.adapter = mentorsAdapter
 
 

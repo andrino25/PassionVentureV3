@@ -19,13 +19,13 @@
         android:theme="@style/Theme.PassionVenture"
         tools:targetApi="31">
         <activity
+            android:name=".Bookings"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
             android:name=".CompanyHomePage"
             android:exported="false"
             android:label="@string/title_activity_company_home_page"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".OrganizationHomePage"
-            android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".LandingPage"

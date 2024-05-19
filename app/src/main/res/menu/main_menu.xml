@@ -11,8 +11,8 @@
         android:title="Messages"/>
 
     <item
-        android:id="@+id/resources"
-        android:title="Saved Resources"/>
+        android:id="@+id/Bookings"
+        android:title="Booked Mentors"/>
 
     <item
         android:id="@+id/logout"

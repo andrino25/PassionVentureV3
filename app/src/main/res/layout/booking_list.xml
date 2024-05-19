@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="10dp"
+    android:padding="5dp"
+    android:background="@drawable/shadow_box"
+    android:layout_marginBottom="20dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/imageHolder"
+        android:layout_width="80dp"
+        app:shapeAppearanceOverlay="@style/rounded"
+        android:layout_height="80dp"
+        android:src="@drawable/profile"
+        android:layout_margin="10dp"/>
+
+    <TextView
+        android:id="@+id/mentorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageHolder"
+        android:layout_marginTop="20dp"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:text="Mentor Name Here"/>
+
+    <TextView
+        android:id="@+id/mentorProfession"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/imageHolder"
+        android:layout_below="@id/mentorName"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:text="Mentor Name Here"/>
+
+</RelativeLayout>

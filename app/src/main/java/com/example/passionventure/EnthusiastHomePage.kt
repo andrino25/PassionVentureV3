@@ -66,8 +66,11 @@ class EnthusiastHomePage : AppCompatActivity() {
                     // Handle Messages option click
                     true
                 }
-                R.id.resources -> {
-                    // Handle Saved Resources option click
+                R.id.Bookings -> {
+                    val currUser = intent.getStringExtra("name")
+                    val intent = Intent(this, Bookings::class.java)
+                    intent.putExtra("name", currUser)
+                    startActivity(intent)
                     true
                 }
                 R.id.logout -> {

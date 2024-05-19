@@ -90,7 +90,7 @@ class CompanyHomePage : AppCompatActivity() {
 
         // Find the items you want to hide
         val menuItem1 = popupMenu.menu.findItem(R.id.messages)
-        val menuItem2 = popupMenu.menu.findItem(R.id.resources)
+        val menuItem2 = popupMenu.menu.findItem(R.id.Bookings)
         // Hide them
         menuItem1.isVisible = false
         menuItem2.isVisible = false

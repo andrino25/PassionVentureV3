@@ -60,7 +60,7 @@ class MentorHomePage : AppCompatActivity() {
         popupMenu.menuInflater.inflate(R.menu.main_menu, popupMenu.menu)
 
         // Find the items you want to hide
-        val menuItem1 = popupMenu.menu.findItem(R.id.resources)
+        val menuItem1 = popupMenu.menu.findItem(R.id.Bookings)
         // Hide them
         menuItem1.isVisible = false
 
