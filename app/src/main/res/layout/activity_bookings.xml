@@ -54,7 +54,7 @@
         android:text="Booked Mentors"
         android:layout_below="@id/toolbar"
         android:textColor="@color/black"
-        android:textSize="40sp"
+        android:textSize="30sp"
         android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView

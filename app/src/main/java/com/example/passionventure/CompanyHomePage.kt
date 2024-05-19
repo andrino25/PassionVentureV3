@@ -20,7 +20,6 @@ class CompanyHomePage : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityCompanyHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -37,6 +36,7 @@ class CompanyHomePage : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
 
         // Retrieve username from intent
         val username = intent.getStringExtra("username")

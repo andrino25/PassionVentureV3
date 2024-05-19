@@ -38,13 +38,11 @@ class offeredJobsFragment : Fragment() {
 
         _binding = FragmentOfferedJobsBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
         val textView: TextView = binding.textHome
         offeredJobsViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
 
-        // Retrieve username from arguments
         username = arguments?.getString("username").toString()
 
         // Initialize Firebase
@@ -76,7 +74,6 @@ class offeredJobsFragment : Fragment() {
                     if (dataSnapshot.exists()) {
                         val userDataSnapshot = dataSnapshot.children.first()
                         company = userDataSnapshot.child("name").getValue(String::class.java) ?: ""
-
                         // Fetch jobs for the company
                         fetchJobsForCompany(company)
                     }
@@ -89,31 +86,34 @@ class offeredJobsFragment : Fragment() {
     }
 
     private fun fetchJobsForCompany(companyName: String) {
-        jobsReference.orderByChild("company").equalTo(companyName)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    jobList.clear()
-                    for (jobSnapshot in dataSnapshot.children) {
-                        val job = jobSnapshot.getValue(Jobs::class.java)
-                        job?.let {
-                            jobList.add(it)
+        // Ensure that the binding is not null before accessing its properties
+        _binding?.apply {
+            jobsReference.orderByChild("company").equalTo(companyName)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        jobList.clear()
+                        for (jobSnapshot in dataSnapshot.children) {
+                            val job = jobSnapshot.getValue(Jobs::class.java)
+                            job?.let {
+                                jobList.add(it)
+                            }
+                        }
+                        jobAdapter.notifyDataSetChanged()
+
+                        if (jobList.isEmpty()) {
+                            textViewNoItems.visibility = View.VISIBLE
+                            recyclerView.visibility = View.GONE
+                        } else {
+                            textViewNoItems.visibility = View.GONE
+                            recyclerView.visibility = View.VISIBLE
                         }
                     }
-                    jobAdapter.notifyDataSetChanged()
 
-                    if (jobList.isEmpty()) {
-                        binding.textViewNoItems.visibility = View.VISIBLE
-                        recyclerView.visibility = View.GONE
-                    } else {
-                        binding.textViewNoItems.visibility = View.GONE
-                        recyclerView.visibility = View.VISIBLE
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error
                     }
-
-                }
-
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                }
-            })
+                })
+        }
     }
+
 }
