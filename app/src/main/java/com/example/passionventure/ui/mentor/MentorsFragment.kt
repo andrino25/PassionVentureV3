@@ -44,10 +44,11 @@ class MentorsFragment : Fragment() {
         val root: View = binding.root
 
         val currUser = activity?.intent?.getStringExtra("name").toString()
+        val currUserprofile = activity?.intent?.getStringExtra("userProfile").toString()
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         mentorsList = mutableListOf()
-        mentorsAdapter = MentorAdapter(this, mentorsList, currUser)
+        mentorsAdapter = MentorAdapter(this, mentorsList, currUser, currUserprofile)
         recyclerView.adapter = mentorsAdapter
 
 

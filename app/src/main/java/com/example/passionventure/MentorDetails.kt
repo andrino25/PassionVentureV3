@@ -48,9 +48,10 @@ class MentorDetails : AppCompatActivity() {
 
             // Get current user's name from intent extras
             val currUser = intent.getStringExtra("currUser") ?: ""
-
+            val currUserProfile = intent.getStringExtra("currUserProfile") ?: ""
+            var status = "Pending"
             // Create a Booking instance
-            val booking = Booking(currUser, mentorName, mentorProfession,mentorImageUrl)
+            val booking = Booking(currUser, mentorName, mentorProfession,mentorImageUrl, currUserProfile, status)
 
             // Save booking to Firebase Realtime Database
             saveBookingToDatabase(booking)

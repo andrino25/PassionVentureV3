@@ -17,10 +17,12 @@ class BookingsAdapter(private val context: Context) : RecyclerView.Adapter<Booki
         private val mentorNameTextView: TextView = itemView.findViewById(R.id.mentorName)
         private val mentorProfessionTextView: TextView = itemView.findViewById(R.id.mentorProfession)
         private val imageHolder: ImageView = itemView.findViewById(R.id.imageHolder)
+        private val bookingStatusTextView: TextView = itemView.findViewById(R.id.bookingStatus)
 
         fun bind(booking: Booking) {
-            mentorNameTextView.text = "Name: ${booking.mentorName}"
-            mentorProfessionTextView.text = "Profession: ${booking.mentorProfession}"
+            mentorNameTextView.text = booking.mentorName
+            mentorProfessionTextView.text = booking.mentorProfession
+            bookingStatusTextView.text = booking.bookingStatus
             Picasso.get().load(booking.mentorImageUrl).into(imageHolder)
         }
     }

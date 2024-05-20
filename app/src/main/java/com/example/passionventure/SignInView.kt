@@ -72,6 +72,7 @@ class SignInView : AppCompatActivity() {
                                         val intent = Intent(this@SignInView, EnthusiastHomePage::class.java)
                                         intent.putExtra("username", user.username)
                                         intent.putExtra("name", user.name)
+                                        intent.putExtra("userProfile", user.profileImageUrl)
                                         Toast.makeText(this@SignInView, "Welcome Enthusiast ${user.name}", Toast.LENGTH_SHORT).show()
                                         startActivity(intent)
                                     } else if (user.role == "Mentor") {

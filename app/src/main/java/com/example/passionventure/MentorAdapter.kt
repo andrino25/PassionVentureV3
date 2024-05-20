@@ -14,7 +14,7 @@ import com.example.passionventure.ui.mentor.MentorsFragment
 import com.squareup.picasso.Picasso
 import java.util.Locale
 
-class MentorAdapter(private val context: MentorsFragment, private var mentorList: List<User>, private val currUser: String?) :
+class MentorAdapter(private val context: MentorsFragment, private var mentorList: List<User>, private val currUser: String?, private val currUserProfile: String?) :
     RecyclerView.Adapter<MentorAdapter.MentorViewHolder>() {
 
     private var filteredList: List<User> = mentorList
@@ -55,6 +55,7 @@ class MentorAdapter(private val context: MentorsFragment, private var mentorList
                     putExtra("description", mentor.description)
                     putExtra("imageUrl", mentor.profileImageUrl)
                     putExtra("currUser", currUser)
+                    putExtra("currUserProfile", currUserProfile)
                 }
                 context.startActivity(intent)
             }
