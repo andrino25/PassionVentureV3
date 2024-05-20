@@ -17,4 +17,10 @@
         android:label="@string/title_dashboard"
         tools:layout="@layout/fragment_post_job" />
 
+    <fragment
+        android:id="@+id/navigation_mentor_bookings"
+        android:name="com.example.passionventure.MentorBookingsFragment"
+        android:label="Mentor Bookings"
+        tools:layout="@layout/fragment_mentor_bookings"/>
+
 </navigation>

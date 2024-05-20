@@ -23,9 +23,20 @@ class BookingsAdapter(private val context: Context) : RecyclerView.Adapter<Booki
             mentorNameTextView.text = booking.mentorName
             mentorProfessionTextView.text = booking.mentorProfession
             bookingStatusTextView.text = booking.bookingStatus
+
+            // Set text color based on booking status
+            val statusColor = when (booking.bookingStatus) {
+                "Pending" -> R.color.orange
+                "Accepted" -> R.color.green   // Use your color resource for green
+                "Rejected" -> R.color.red     // Use your color resource for red
+                else -> android.R.color.black // Default color (black)
+            }
+            bookingStatusTextView.setTextColor(itemView.context.getColor(statusColor))
+
             Picasso.get().load(booking.mentorImageUrl).into(imageHolder)
         }
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.booking_list, parent, false)

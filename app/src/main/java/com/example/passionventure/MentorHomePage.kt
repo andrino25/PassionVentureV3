@@ -20,7 +20,6 @@ class MentorHomePage : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMentorHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -29,17 +28,49 @@ class MentorHomePage : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         val navView: BottomNavigationView = binding.navView
-
         val navController = findNavController(R.id.nav_host_fragment_activity_mentor_home_page)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+
+        // Passing each menu ID as a set of Ids because each menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_home, R.id.navigation_dashboard
+                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_mentor_bookings
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Retrieve currUser from the intent
+        val currUser = intent.getStringExtra("name")
+
+        // Set up the BottomNavigationView item selection listener
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    val username = intent.getStringExtra("username")
+                    val bundle = Bundle().apply {
+                        putString("username", username)
+                    }
+                    navController.navigate(R.id.navigation_home, bundle)
+                    true
+                }
+                R.id.navigation_dashboard -> {
+                    val username = intent.getStringExtra("username")
+                    val bundle = Bundle().apply {
+                        putString("username", username)
+                    }
+                    navController.navigate(R.id.navigation_dashboard, bundle)
+                    true
+                }
+                R.id.navigation_mentor_bookings -> {
+                    val bundle = Bundle().apply {
+                        putString("username", currUser)
+                    }
+                    navController.navigate(R.id.navigation_mentor_bookings, bundle)
+                    true
+                }
+                else -> false
+            }
+        }
 
         // Set up back button click listener
         val backButton: ImageButton = findViewById(R.id.backButton)
@@ -52,7 +83,6 @@ class MentorHomePage : AppCompatActivity() {
         menuButton.setOnClickListener { view ->
             showPopupMenu(view)
         }
-
     }
 
     private fun showPopupMenu(view: View) {
@@ -73,12 +103,10 @@ class MentorHomePage : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-
                 R.id.messages -> {
                     // Handle Messages option click
                     true
                 }
-
                 R.id.logout -> {
                     val intent = Intent(this, SignInView::class.java)
                     startActivity(intent)

@@ -3,7 +3,9 @@ package com.example.passionventure
 import Booking
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,8 @@ class Bookings : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var bookingsAdapter: BookingsAdapter
+    private lateinit var noBookingsTextView: TextView
+    private lateinit var TitleTextView: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bookings)
@@ -26,7 +30,8 @@ class Bookings : AppCompatActivity() {
         }
 
         val currentUser = intent.getStringExtra("name").toString()
-
+        noBookingsTextView = findViewById(R.id.noBookingsTextView)
+        TitleTextView = findViewById(R.id.TitleTextView)
         // Set up RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -49,7 +54,21 @@ class Bookings : AppCompatActivity() {
                         val booking = bookingSnapshot.getValue(Booking::class.java)
                         booking?.let { bookingsList.add(it) }
                     }
-                    bookingsAdapter.submitList(bookingsList)
+
+                    // Check if the bookings list is empty
+                    if (bookingsList.isEmpty()) {
+                        // Hide RecyclerView and show "No bookings" message
+                        recyclerView.visibility = View.GONE
+                        noBookingsTextView.visibility = View.VISIBLE
+                        TitleTextView.visibility = View.GONE // Hide the title
+                    } else {
+                        // Show RecyclerView and hide "No bookings" message
+                        recyclerView.visibility = View.VISIBLE
+                        noBookingsTextView.visibility = View.GONE
+                        TitleTextView.visibility = View.VISIBLE // Show the title
+                        // Submit the list to the adapter
+                        bookingsAdapter.submitList(bookingsList)
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -57,5 +76,6 @@ class Bookings : AppCompatActivity() {
                 }
             })
     }
+
 
 }

@@ -9,5 +9,9 @@
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/add_logo"
         android:title="Add Contribution" />
+    <item
+        android:id="@+id/navigation_mentor_bookings"
+        android:icon="@drawable/add_logo"
+        android:title="Bookings" />
 
 </menu>

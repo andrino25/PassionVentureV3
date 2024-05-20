@@ -11,11 +11,14 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/imageHolder"
-        android:layout_width="80dp"
-        app:shapeAppearanceOverlay="@style/rounded"
-        android:layout_height="80dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
         android:src="@drawable/profile"
-        android:layout_margin="10dp"/>
+        app:shapeAppearanceOverlay="@style/roundedImageView2" />
 
     <TextView
         android:id="@+id/userName"
@@ -23,8 +26,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/imageHolder"
-        android:layout_marginStart="10dp"
-        android:textSize="12sp"
+        android:layout_marginStart="5dp"
+        android:textSize="14sp"
         android:textColor="@color/black"
         android:text="Enthusiast Name"/>
 
@@ -33,9 +36,9 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
         android:layout_toLeftOf="@id/rejectBtn"
         android:background="@drawable/accept"
+        android:layout_marginEnd="5dp"
         tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
 
     <ImageButton
@@ -44,8 +47,7 @@
         android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="10dp"
+        android:layout_marginEnd="5dp"
         android:background="@drawable/reject"
         tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
 </RelativeLayout>

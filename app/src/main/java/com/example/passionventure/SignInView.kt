@@ -78,6 +78,7 @@ class SignInView : AppCompatActivity() {
                                     } else if (user.role == "Mentor") {
                                         val intent = Intent(this@SignInView, MentorHomePage::class.java)
                                         intent.putExtra("username", user.username)
+                                        intent.putExtra("name", user.name)
                                         Toast.makeText(this@SignInView, "Welcome Mentor ${user.name}", Toast.LENGTH_SHORT).show()
                                         startActivity(intent)
                                     }

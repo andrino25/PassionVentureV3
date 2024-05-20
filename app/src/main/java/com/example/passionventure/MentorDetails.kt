@@ -8,7 +8,10 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 
 class MentorDetails : AppCompatActivity() {
@@ -58,18 +61,45 @@ class MentorDetails : AppCompatActivity() {
         }
     }
 
-        private fun saveBookingToDatabase(booking: Booking) {
-            val database = FirebaseDatabase.getInstance().reference.child("bookings")
-            val newBookingRef = database.push()
-            newBookingRef.setValue(booking)
-                .addOnSuccessListener {
-                    // Handle successful booking
-                    Toast.makeText(this, "Booked successfully", Toast.LENGTH_SHORT).show()
+    private fun saveBookingToDatabase(booking: Booking) {
+        val database = FirebaseDatabase.getInstance().reference.child("bookings")
+        val newBookingRef = database.push()
+
+        // Check if the booking already exists
+        database.orderByChild("mentorName").equalTo(booking.mentorName)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var bookingExists = false
+                    for (bookingSnapshot in snapshot.children) {
+                        val existingBooking = bookingSnapshot.getValue(Booking::class.java)
+                        if (existingBooking != null && existingBooking.currUser == booking.currUser) {
+                            // Booking already exists
+                            bookingExists = true
+                            break
+                        }
+                    }
+                    if (bookingExists) {
+                        // Display toast indicating that the booking already exists
+                        Toast.makeText(this@MentorDetails, "Already booked this mentor.", Toast.LENGTH_SHORT).show()
+                    } else {
+                        // Save the new booking
+                        newBookingRef.setValue(booking)
+                            .addOnSuccessListener {
+                                // Handle successful booking
+                                Toast.makeText(this@MentorDetails, "Booked successfully", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                // Handle failure
+                                Toast.makeText(this@MentorDetails, "Booking failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                    }
                 }
-                .addOnFailureListener { e ->
-                    // Handle failure
-                    Toast.makeText(this, "Booking failed: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle database error
+                    Toast.makeText(this@MentorDetails, "Failed to check existing booking", Toast.LENGTH_SHORT).show()
                 }
-        }
+            })
+    }
 
     }
