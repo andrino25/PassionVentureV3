@@ -43,11 +43,11 @@ class MentorBookingsFragment : Fragment() {
         bookingsList = mutableListOf()
         bookingsAdapter = MentorBookingsAdapter(requireContext(), bookingsList, object : MentorBookingsAdapter.OnItemClickListener {
             override fun onAcceptClick(booking: Booking) {
-                updateBookingStatus(booking)
+                updateBookingStatus(booking, "Accepted")
             }
 
             override fun onRejectClick(booking: Booking) {
-                updateBookingStatus(booking)
+                updateBookingStatus(booking, "Rejected")
             }
         })
 
@@ -67,10 +67,10 @@ class MentorBookingsFragment : Fragment() {
                     for (bookingSnapshot in snapshot.children) {
                         val booking = bookingSnapshot.getValue(Booking::class.java)
                         booking?.let {
-                            bookingsList.add(it)
+                            bookingsList.add(0, it) // Add new items to the top
                         }
                     }
-                    bookingsAdapter.notifyDataSetChanged()
+                    bookingsAdapter.submitList(bookingsList)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -79,9 +79,8 @@ class MentorBookingsFragment : Fragment() {
             })
     }
 
-    private fun updateBookingStatus(booking: Booking) {
+    private fun updateBookingStatus(booking: Booking, newStatus: String) {
         val bookingRef = database.orderByChild("mentorName").equalTo(mentorName)
-        val newStatus = if (booking.bookingStatus == "Accepted") "Accepted" else "Rejected"
         bookingRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -91,17 +90,9 @@ class MentorBookingsFragment : Fragment() {
                             snapshot.ref.child("bookingStatus").setValue(newStatus)
                                 .addOnSuccessListener {
                                     Toast.makeText(context, "Booking $newStatus", Toast.LENGTH_SHORT).show()
-                                    // Remove the item from the list
-                                    val index = bookingsList.indexOf(booking)
-                                    if (index != -1) {
-                                        bookingsList.removeAt(index)
-                                        // Update the adapter
-                                        bookingsAdapter.notifyItemRemoved(index)
-                                        // Check if the RecyclerView is empty after removing the item
-                                        if (bookingsList.isEmpty()) {
-                                            hideRecyclerView()
-                                        }
-                                    }
+                                    booking.bookingStatus = newStatus
+                                    bookingsAdapter.notifyDataSetChanged()
+                                    bookingsAdapter.moveToBottom(booking)
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(context, "Failed to update status", Toast.LENGTH_SHORT).show()

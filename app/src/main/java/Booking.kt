@@ -4,5 +4,5 @@ data class Booking(
     val mentorProfession: String = "",
     val mentorImageUrl: String = "",
     val currUserImageUrl: String = "",
-    val bookingStatus: String = ""
+    var bookingStatus: String = ""
 )
