@@ -67,9 +67,10 @@ class MentorBookingsFragment : Fragment() {
                     for (bookingSnapshot in snapshot.children) {
                         val booking = bookingSnapshot.getValue(Booking::class.java)
                         booking?.let {
-                            bookingsList.add(0, it) // Add new items to the top
+                            bookingsList.add(it)
                         }
                     }
+                    sortBookings()
                     bookingsAdapter.submitList(bookingsList)
                 }
 
@@ -77,6 +78,10 @@ class MentorBookingsFragment : Fragment() {
                     Toast.makeText(context, "Failed to load bookings: ${error.message}", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    private fun sortBookings() {
+        bookingsList.sortWith(compareByDescending<Booking> { it.bookingStatus == "Pending" }.thenBy { it.bookingStatus })
     }
 
     private fun updateBookingStatus(booking: Booking, newStatus: String) {
@@ -91,8 +96,8 @@ class MentorBookingsFragment : Fragment() {
                                 .addOnSuccessListener {
                                     Toast.makeText(context, "Booking $newStatus", Toast.LENGTH_SHORT).show()
                                     booking.bookingStatus = newStatus
+                                    sortBookings()
                                     bookingsAdapter.notifyDataSetChanged()
-                                    bookingsAdapter.moveToBottom(booking)
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(context, "Failed to update status", Toast.LENGTH_SHORT).show()
@@ -120,3 +125,4 @@ class MentorBookingsFragment : Fragment() {
         _binding = null
     }
 }
+
