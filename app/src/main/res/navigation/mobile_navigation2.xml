@@ -9,13 +9,13 @@
         android:id="@+id/navigation_home"
         android:name="com.example.passionventure.ui.contributions.ContributionsFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_offered_jobs" />
+        tools:layout="@layout/fragment_contributions" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
         android:name="com.example.passionventure.ui.addContribution.addContributionFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_post_job" />
+        tools:layout="@layout/fragment_add_contribution" />
 
     <fragment
         android:id="@+id/navigation_mentor_bookings"

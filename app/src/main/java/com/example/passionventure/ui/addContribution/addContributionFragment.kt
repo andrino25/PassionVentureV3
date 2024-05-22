@@ -30,6 +30,8 @@ class addContributionFragment : Fragment() {
 
 
         return root
+
+
     }
 
     override fun onDestroyView() {

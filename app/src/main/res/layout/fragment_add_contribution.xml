@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:paddingBottom="?attr/actionBarSize"
     android:paddingTop="?attr/actionBarSize"
-    tools:context=".AddContributionFragment">
+    tools:context=".ui.addContribution.addContributionFragment">
 
     <TextView
         android:layout_centerVertical="true"
