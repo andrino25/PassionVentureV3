@@ -60,12 +60,10 @@ class Bookings : AppCompatActivity() {
                         // Hide RecyclerView and show "No bookings" message
                         recyclerView.visibility = View.GONE
                         noBookingsTextView.visibility = View.VISIBLE
-                        TitleTextView.visibility = View.GONE // Hide the title
                     } else {
                         // Show RecyclerView and hide "No bookings" message
                         recyclerView.visibility = View.VISIBLE
                         noBookingsTextView.visibility = View.GONE
-                        TitleTextView.visibility = View.VISIBLE // Show the title
                         // Submit the list to the adapter
                         bookingsAdapter.submitList(bookingsList)
                     }

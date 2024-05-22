@@ -13,6 +13,7 @@
         android:layout_centerHorizontal="true"
         android:textColor="@color/black"
         android:layout_marginTop="20dp"
+        android:layout_below="@id/title"
         android:visibility="gone"
         android:textStyle="bold"
         android:text="No bookings today. Contribute instead hehe"/>

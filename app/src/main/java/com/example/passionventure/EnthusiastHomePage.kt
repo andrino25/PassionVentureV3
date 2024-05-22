@@ -92,9 +92,9 @@ class EnthusiastHomePage : AppCompatActivity() {
                     true
                 }
                 R.id.Bookings -> {
-                    val currUser = intent.getStringExtra("username")
+                    val currUser = intent.getStringExtra("name")
                     val intent = Intent(this, Bookings::class.java)
-                    intent.putExtra("username", currUser)
+                    intent.putExtra("name", currUser)
                     startActivity(intent)
                     true
                 }

@@ -74,9 +74,9 @@
         android:layout_centerHorizontal="true"
         android:textColor="@color/black"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/TitleTextView"
         android:visibility="gone"
         android:textStyle="bold"
-        android:text="No bookings today. Contribute instead hehe"/>
+        android:text="No bookings. Book someone today"/>
 
 </RelativeLayout>

@@ -72,6 +72,12 @@ class MentorBookingsFragment : Fragment() {
                     }
                     sortBookings()
                     bookingsAdapter.submitList(bookingsList)
+
+                    if (bookingsList.isEmpty()) {
+                        showNoBookingsMessage()
+                    } else {
+                        showRecyclerView()
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -114,10 +120,15 @@ class MentorBookingsFragment : Fragment() {
         })
     }
 
-    private fun hideRecyclerView() {
+    private fun showNoBookingsMessage() {
         binding.recyclerView.visibility = View.GONE
         binding.noBookingsTextView.visibility = View.VISIBLE
-        binding.title.visibility = View.GONE // Assuming you have a TextView for showing no bookings message
+    }
+
+    private fun showRecyclerView() {
+        binding.recyclerView.visibility = View.VISIBLE
+        binding.noBookingsTextView.visibility = View.GONE
+        binding.title.visibility = View.VISIBLE
     }
 
     override fun onDestroyView() {
@@ -125,4 +136,3 @@ class MentorBookingsFragment : Fragment() {
         _binding = null
     }
 }
-
