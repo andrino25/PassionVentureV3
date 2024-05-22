@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -17,6 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 class EnthusiastHomePage : AppCompatActivity() {
 
     private lateinit var binding: ActivityEnthusiastHomePageBinding
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +30,7 @@ class EnthusiastHomePage : AppCompatActivity() {
 
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_enthusiast_home_page)
+        navController = findNavController(R.id.nav_host_fragment_activity_enthusiast_home_page)
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_mentors, R.id.navigation_macthing, R.id.navigation_resources
@@ -36,6 +38,8 @@ class EnthusiastHomePage : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        val currUser = intent.getStringExtra("name")
 
         // Set up back button click listener
         val backButton: ImageButton = findViewById(R.id.backButton)
@@ -47,6 +51,27 @@ class EnthusiastHomePage : AppCompatActivity() {
         val menuButton: ImageButton = findViewById(R.id.menuButton)
         menuButton.setOnClickListener { view ->
             showPopupMenu(view)
+        }
+
+        // Handle navigation item selection to pass the username
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_mentors -> {
+                    navController.navigate(R.id.navigation_mentors)
+                    true
+                }
+                R.id.navigation_macthing -> {
+                    val bundle = Bundle()
+                    bundle.putString("username", currUser)
+                    navController.navigate(R.id.navigation_macthing, bundle)
+                    true
+                }
+                R.id.navigation_resources -> {
+                    navController.navigate(R.id.navigation_resources)
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -67,9 +92,9 @@ class EnthusiastHomePage : AppCompatActivity() {
                     true
                 }
                 R.id.Bookings -> {
-                    val currUser = intent.getStringExtra("name")
+                    val currUser = intent.getStringExtra("username")
                     val intent = Intent(this, Bookings::class.java)
-                    intent.putExtra("name", currUser)
+                    intent.putExtra("username", currUser)
                     startActivity(intent)
                     true
                 }

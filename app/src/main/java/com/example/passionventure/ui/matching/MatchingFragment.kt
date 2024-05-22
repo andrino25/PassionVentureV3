@@ -1,63 +1,63 @@
 package com.example.passionventure.ui.matching
 
 import Jobs
+import Resume
+import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passionventure.JobAdapter
+import com.example.passionventure.JobDetails
 import com.example.passionventure.databinding.FragmentMatchingBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class MatchingFragment : Fragment() {
 
     private var _binding: FragmentMatchingBinding? = null
     private lateinit var jobList: MutableList<Jobs>
+    private lateinit var resumeList: MutableList<Resume>
     private val binding get() = _binding!!
-
     private lateinit var jobListAdapter: JobAdapter
     private lateinit var databaseReference: DatabaseReference
     private lateinit var recyclerView: RecyclerView
+    private lateinit var currUser: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentMatchingBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         recyclerView = binding.recyclerView
+        currUser = arguments?.getString("username").toString()
         recyclerView.layoutManager = LinearLayoutManager(activity)
         jobList = mutableListOf()
-        jobListAdapter = JobAdapter(requireContext(), jobList)
+        resumeList = mutableListOf() // Initialize resume list
+        jobListAdapter = JobAdapter(requireContext(), jobList, resumeList) { job, resume ->
+            // Handle item click inside the fragment
+            val intent = Intent(requireContext(), JobDetails::class.java).apply {
+                putExtra("jobTitle", job.title)
+                putExtra("jobDesc", job.description)
+                putExtra("jobCompany", job.company)
+                putExtra("jobCategory", job.category)
+                putExtra("jobExperience", job.experience)
+                putExtra("jobAttainment", job.attainment)
+                putExtra("jobSalary", job.salary)
+                putExtra("jobAddress", job.companyAddress)
+                putExtra("companyDescription", job.companyDescription)
+                putExtra("username", currUser)
+            }
+            startActivity(intent)
+        }
         recyclerView.adapter = jobListAdapter
 
-
         fetchDataFromDatabase()
-
-        val searchEditText: EditText = binding.searchTab
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                jobListAdapter.filter(s.toString())
-            }
-        })
-
 
         return root
     }
@@ -78,7 +78,7 @@ class MatchingFragment : Fragment() {
                         jobList.add(it)
                     }
                 }
-                jobListAdapter.notifyDataSetChanged()
+                jobListAdapter.notifyDataSetChanged() // Update the adapter with the new job list
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -86,5 +86,4 @@ class MatchingFragment : Fragment() {
             }
         })
     }
-
 }

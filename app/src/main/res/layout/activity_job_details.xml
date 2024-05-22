@@ -294,6 +294,28 @@
                 android:textSize="16sp"
                 android:textColor="@color/black"/>
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:visibility="gone"
+                android:layout_below="@id/jobDesc"/>
+
+            <Button
+                android:id="@+id/attachResumeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/progressBar"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="100dp"
+                android:layout_centerHorizontal="true"
+                android:text="Attach Resume"
+                android:background="@drawable/button_corners"
+                android:layout_marginBottom="50dp"
+                android:textColor="@android:color/black"/>
+
 
         </RelativeLayout>
 

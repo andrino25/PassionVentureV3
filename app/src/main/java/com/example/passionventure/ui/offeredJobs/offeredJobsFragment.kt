@@ -1,7 +1,10 @@
 package com.example.passionventure.ui.offeredJobs
 
 import Jobs
+import Resume
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passionventure.JobAdapter
+import com.example.passionventure.ResumeList
 import com.example.passionventure.databinding.FragmentOfferedJobsBinding
 import com.google.firebase.database.*
 
@@ -24,9 +28,9 @@ class offeredJobsFragment : Fragment() {
     private lateinit var jobList: MutableList<Jobs>
     private lateinit var jobAdapter: JobAdapter
     private lateinit var recyclerView: RecyclerView
+    private lateinit var resumeList: MutableList<Resume> // Add resumeList
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -49,15 +53,21 @@ class offeredJobsFragment : Fragment() {
         userReference = FirebaseDatabase.getInstance().getReference("users")
         jobsReference = FirebaseDatabase.getInstance().getReference("jobs")
 
-        // Retrieve user's name based on username
-        username?.let { retrieveUserName(it) }
-
         // Initialize RecyclerView and adapter
         recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(context)
         jobList = mutableListOf()
-        jobAdapter = JobAdapter(requireContext(), jobList)
+        resumeList = mutableListOf() // Initialize resume list
+        jobAdapter = JobAdapter(requireContext(), jobList, resumeList) { job, resume ->
+            val intent = Intent(requireContext(), ResumeList::class.java).apply {
+            putExtra("jobTitle", job.title)
+        }
+            startActivity(intent)
+        }
         recyclerView.adapter = jobAdapter
+
+        // Fetch jobs and resumes
+        retrieveUserName(username)
 
         return root
     }
@@ -86,34 +96,44 @@ class offeredJobsFragment : Fragment() {
     }
 
     private fun fetchJobsForCompany(companyName: String) {
-        // Ensure that the binding is not null before accessing its properties
-        _binding?.apply {
-            jobsReference.orderByChild("company").equalTo(companyName)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        jobList.clear()
-                        for (jobSnapshot in dataSnapshot.children) {
-                            val job = jobSnapshot.getValue(Jobs::class.java)
-                            job?.let {
-                                jobList.add(it)
-                            }
-                        }
-                        jobAdapter.notifyDataSetChanged()
-
-                        if (jobList.isEmpty()) {
-                            textViewNoItems.visibility = View.VISIBLE
-                            recyclerView.visibility = View.GONE
-                        } else {
-                            textViewNoItems.visibility = View.GONE
-                            recyclerView.visibility = View.VISIBLE
+        jobsReference.orderByChild("company").equalTo(companyName)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    jobList.clear()
+                    for (jobSnapshot in dataSnapshot.children) {
+                        val job = jobSnapshot.getValue(Jobs::class.java)
+                        job?.let {
+                            jobList.add(it)
                         }
                     }
+                    // After fetching jobs, fetch resumes
+                    fetchResumesForJobs(jobList)
+                }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        // Handle error
-                    }
-                })
-        }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle error
+                }
+            })
     }
 
+    private fun fetchResumesForJobs(jobs: List<Jobs>) {
+        val resumeReference = FirebaseDatabase.getInstance().getReference("resumes")
+        resumeReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                resumeList.clear()
+                for (resumeSnapshot in dataSnapshot.children) {
+                    val resume = resumeSnapshot.getValue(Resume::class.java)
+                    resume?.let {
+                        resumeList.add(it)
+                    }
+                }
+                // After fetching resumes, update the adapter with the new resume list
+                jobAdapter.notifyDataSetChanged()
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle error
+            }
+        })
+    }
 }

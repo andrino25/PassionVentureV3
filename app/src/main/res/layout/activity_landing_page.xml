@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#34013f"
+    android:gravity="center"
     tools:context=".LandingPage">
 
     <ImageView
@@ -15,7 +16,6 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
         android:layout_gravity="center_horizontal"/>
 
     <TextView
