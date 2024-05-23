@@ -1,12 +1,12 @@
 package com.example.passionventure
 
 import Booking
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toolbar
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DataSnapshot
@@ -19,7 +19,8 @@ class Bookings : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var bookingsAdapter: BookingsAdapter
     private lateinit var noBookingsTextView: TextView
-    private lateinit var TitleTextView: TextView
+    private lateinit var titleTextView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_bookings)
@@ -31,11 +32,14 @@ class Bookings : AppCompatActivity() {
 
         val currentUser = intent.getStringExtra("name").toString()
         noBookingsTextView = findViewById(R.id.noBookingsTextView)
-        TitleTextView = findViewById(R.id.TitleTextView)
+        titleTextView = findViewById(R.id.TitleTextView)
+
         // Set up RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        bookingsAdapter = BookingsAdapter(this)
+        bookingsAdapter = BookingsAdapter(this) { booking, key ->
+            showCancelDialog(booking, key)
+        }
         recyclerView.adapter = bookingsAdapter
 
         // Fetch bookings data from Firebase
@@ -45,14 +49,14 @@ class Bookings : AppCompatActivity() {
     private fun fetchBookingsFromDatabase(currentUser: String) {
         val databaseReference = FirebaseDatabase.getInstance().reference.child("bookings")
 
-        // Query bookings where the 'userName' field matches the current user
+        // Query bookings where the 'currUser' field matches the current user
         databaseReference.orderByChild("currUser").equalTo(currentUser)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val bookingsList = mutableListOf<Booking>()
+                    val bookingsList = mutableListOf<Pair<Booking, String>>()
                     for (bookingSnapshot in snapshot.children) {
                         val booking = bookingSnapshot.getValue(Booking::class.java)
-                        booking?.let { bookingsList.add(it) }
+                        booking?.let { bookingsList.add(Pair(it, bookingSnapshot.key!!)) }
                     }
 
                     // Check if the bookings list is empty
@@ -75,5 +79,23 @@ class Bookings : AppCompatActivity() {
             })
     }
 
+    private fun showCancelDialog(booking: Booking, key: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Cancel Booking")
+            .setMessage("Do you want to cancel this booking?")
+            .setPositiveButton("Yes") { dialog, _ ->
+                cancelBooking(key)
+                dialog.dismiss()
+            }
+            .setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
+    }
 
+    private fun cancelBooking(key: String) {
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("bookings")
+        databaseReference.child(key).removeValue()
+    }
 }
