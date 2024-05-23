@@ -88,7 +88,8 @@ class EnthusiastHomePage : AppCompatActivity() {
                     true
                 }
                 R.id.messages -> {
-                    // Handle Messages option click
+                    val intent = Intent(this, RecentChat::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.Bookings -> {

@@ -19,6 +19,17 @@
         android:theme="@style/Theme.PassionVenture"
         tools:targetApi="31">
         <activity
+            android:name=".ChatActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SearchUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".RecentChat"
+            android:exported="false"
+            android:label="@string/title_activity_recent_chat"
+            android:theme="@style/Theme.PassionVenture" />
+        <activity
             android:name=".ResumeList"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

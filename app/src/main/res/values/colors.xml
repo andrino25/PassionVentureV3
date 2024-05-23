@@ -5,11 +5,22 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="green">#008000</color>
     <color name="red">#FF0000</color>
-    <color name="orange">#FFA500</color>
+    <color name="orange">#EF3C04</color>
+
+    <color name="my_primary">#470F53</color>
+    <color name="my_secondary">#D49147</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="off_white">#FAFAFA</color>
+    <color name="light_gray">#C3C3C3</color>
+
+    <color name="chat_color_sender">#470F53</color>
+    <color name="chat_color_receiver">#D49147</color>
+
 
 
 </resources>
