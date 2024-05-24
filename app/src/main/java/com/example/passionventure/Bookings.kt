@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -86,6 +87,7 @@ class Bookings : AppCompatActivity() {
             .setPositiveButton("Yes") { dialog, _ ->
                 cancelBooking(key)
                 dialog.dismiss()
+                Toast.makeText(this, "Booking cancelled successfully", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("No") { dialog, _ ->
                 dialog.dismiss()

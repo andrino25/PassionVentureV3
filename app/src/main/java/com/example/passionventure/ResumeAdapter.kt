@@ -33,7 +33,8 @@ class ResumeAdapter(private val context: Context, private var resumeList: List<R
             resumeName.text = resume.username
             itemView.setOnClickListener {
                 // Handle resume click by opening the document URL in a web browser or web view
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(resume.resumeUrl))
+                val intent = Intent(context, ApplicantDetails::class.java)
+                intent.putExtra("username", resume.username)
                 context.startActivity(intent)
             }
         }
