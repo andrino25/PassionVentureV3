@@ -42,11 +42,17 @@ class MentorHomePage : AppCompatActivity() {
         // Retrieve currUser from the intent
         val currUser = intent.getStringExtra("name")
 
+        val username = intent.getStringExtra("name")
+        val bundle = Bundle().apply {
+            putString("username", username)
+        }
+        navController.navigate(R.id.navigation_home, bundle)
+
         // Set up the BottomNavigationView item selection listener
         navView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    val username = intent.getStringExtra("username")
+                    val username = intent.getStringExtra("name")
                     val bundle = Bundle().apply {
                         putString("username", username)
                     }
@@ -54,7 +60,7 @@ class MentorHomePage : AppCompatActivity() {
                     true
                 }
                 R.id.navigation_dashboard -> {
-                    val username = intent.getStringExtra("username")
+                    val username = intent.getStringExtra("name")
                     val bundle = Bundle().apply {
                         putString("username", username)
                     }

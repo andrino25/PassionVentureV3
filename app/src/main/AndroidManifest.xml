@@ -19,6 +19,14 @@
         android:theme="@style/Theme.PassionVenture"
         tools:targetApi="31">
         <activity
+            android:name=".ContributionDetails"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
+            android:name=".UpdateContribution"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <activity
             android:name=".PaymentDetails"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />

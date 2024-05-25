@@ -99,17 +99,21 @@
                 android:id="@+id/editTextJobCompany"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:padding="15dp"
                 android:layout_below="@id/editTextJobDesc"
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="10dp"
                 android:hint="Job Company"
+                android:background="@drawable/rounded_corners"
                 tools:ignore="TouchTargetSizeCheck" />
 
             <EditText
                 android:id="@+id/editTextJobCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners"
+                android:padding="15dp"
                 android:layout_below="@id/editTextJobCompany"
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="16dp"
@@ -122,6 +126,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editTextJobCategory"
+                android:background="@drawable/rounded_corners"
+                android:padding="15dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="10dp"
@@ -133,6 +139,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editTextJobExperience"
+                android:background="@drawable/rounded_corners"
+                android:padding="15dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="10dp"
@@ -142,6 +150,8 @@
             <EditText
                 android:id="@+id/editTextJobSalary"
                 android:layout_width="match_parent"
+                android:background="@drawable/rounded_corners"
+                android:padding="15dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editTextJobAttainment"
                 android:layout_centerHorizontal="true"
@@ -153,6 +163,8 @@
             <EditText
                 android:id="@+id/editTextJobAddress"
                 android:layout_width="match_parent"
+                android:background="@drawable/rounded_corners"
+                android:padding="15dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/editTextJobSalary"
                 android:layout_centerHorizontal="true"
@@ -165,6 +177,8 @@
                 android:id="@+id/editTextCompanyDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_corners"
+                android:padding="15dp"
                 android:layout_below="@id/editTextJobAddress"
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="16dp"
@@ -185,8 +199,6 @@
                 android:text="Update Job" />
 
         </RelativeLayout>
-
-
     </ScrollView>
 
 
