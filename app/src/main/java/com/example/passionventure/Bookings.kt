@@ -42,9 +42,9 @@ class Bookings : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         bookingsAdapter = BookingsAdapter(this, { booking, key ->
             showCancelDialog(booking, key)
-        }, { mentorName ->
-            startPaymentsActivity(mentorName)
-        }, currentUser)
+        }, { booking, key ->
+            startPaymentsActivity(booking)
+        })
         recyclerView.adapter = bookingsAdapter
 
         // Fetch bookings data from Firebase
@@ -83,10 +83,12 @@ class Bookings : AppCompatActivity() {
                 }
             })
     }
-    private fun startPaymentsActivity(mentorName: String) {
+
+    private fun startPaymentsActivity(booking: Booking) {
         val intent = Intent(this, Payments::class.java)
-        intent.putExtra("mentorName", mentorName)
-        intent.putExtra("currUser", currentUser)
+        intent.putExtra("bookingID", booking.bookingID)
+        intent.putExtra("mentorName", booking.mentorName)
+        intent.putExtra("currUser", booking.currUser)
         startActivity(intent)
     }
 
@@ -111,4 +113,5 @@ class Bookings : AppCompatActivity() {
         databaseReference.child(key).removeValue()
     }
 }
+
 

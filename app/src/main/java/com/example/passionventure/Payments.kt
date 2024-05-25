@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -14,10 +15,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 
@@ -28,6 +26,7 @@ class Payments : AppCompatActivity() {
     private lateinit var paymentMethod: String
     private lateinit var mentorName: String
     private lateinit var paymentAmount: String
+    private lateinit var bookingID: String
     private var imageUri: Uri? = null
     private lateinit var progressBar: ProgressBar
     private val PICK_FILE_REQUEST_CODE = 1
@@ -41,9 +40,25 @@ class Payments : AppCompatActivity() {
         backBtn.setOnClickListener {
             onBackPressed()
         }
-        paymentAmount = findViewById<EditText>(R.id.amountEditText).text.toString()
+
+        // Initialize the views
+        attachBtn = findViewById(R.id.attachBtn)
+        fileNameTextView = findViewById(R.id.fileNameTextView)
+        progressBar = findViewById(R.id.progressBar)
+        val amountEditText = findViewById<EditText>(R.id.amountEditText)
         val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
-        radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        val paymentBtn = findViewById<Button>(R.id.paymentBtn)
+
+        // Retrieve data from the intent
+        currentUser = intent.getStringExtra("currUser") ?: ""
+        mentorName = intent.getStringExtra("mentorName") ?: ""
+        bookingID = intent.getStringExtra("bookingID") ?: ""
+
+        // Log the bookingID to verify
+        Log.d("Payments", "Booking ID: $bookingID")
+
+        // Set up the radio group listener
+        radioGroup.setOnCheckedChangeListener { _, checkedId ->
             paymentMethod = when (checkedId) {
                 R.id.cardBtn -> "Card"
                 R.id.walletBtn -> "E-wallet / Digital Wallet"
@@ -51,18 +66,15 @@ class Payments : AppCompatActivity() {
                 else -> "Unknown"
             }
         }
-        currentUser = intent.getStringExtra("currUser") ?: ""
-        mentorName = intent.getStringExtra("mentorName") ?: ""
-        attachBtn = findViewById(R.id.attachBtn)
-        fileNameTextView = findViewById(R.id.fileNameTextView) // Make sure this ID is correct
-        progressBar = findViewById(R.id.progressBar)
 
+        // Set up the attach button click listener
         attachBtn.setOnClickListener {
             openFilePicker()
         }
 
-        findViewById<Button>(R.id.paymentBtn).setOnClickListener {
-            paymentAmount = findViewById<EditText>(R.id.amountEditText).text.toString()
+        // Set up the payment button click listener
+        paymentBtn.setOnClickListener {
+            paymentAmount = amountEditText.text.toString()
             if (imageUri != null) {
                 uploadImageToStorage()
             } else {
@@ -133,7 +145,7 @@ class Payments : AppCompatActivity() {
         val paymentDetailsRef = FirebaseDatabase.getInstance().getReference("payments")
         val paymentId = paymentDetailsRef.push().key ?: ""
 
-        val payment = Payment(currentUser, mentorName, paymentMethod, paymentAmount, imageUrl)
+        val payment = Payment(currentUser, mentorName, paymentMethod, paymentAmount, imageUrl, bookingID)
 
         paymentDetailsRef.child(paymentId).setValue(payment)
             .addOnSuccessListener {
@@ -149,24 +161,15 @@ class Payments : AppCompatActivity() {
                 progressBar.visibility = ProgressBar.GONE // Hide progress bar when saving is complete
             }
     }
+
     private fun updateBookingStatus() {
-        val bookingRef = FirebaseDatabase.getInstance().getReference("bookings")
-        bookingRef.orderByChild("mentorName").equalTo(mentorName)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    for (bookingSnapshot in dataSnapshot.children) {
-                        val booking = bookingSnapshot.getValue(Booking::class.java)
-                        if (booking != null && booking.currUser == currentUser) {
-                            bookingRef.child(bookingSnapshot.key!!).child("bookingStatus").setValue("Completed")
-                        }
-                    }
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle error
-                    Toast.makeText(applicationContext, "Failed to update booking status", Toast.LENGTH_SHORT).show()
-                }
-            })
+        val bookingRef = FirebaseDatabase.getInstance().getReference("bookings").child(bookingID)
+        bookingRef.child("bookingStatus").setValue("Completed")
+            .addOnSuccessListener {
+                Toast.makeText(this, "Booking status updated", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to update booking status: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
-
 }

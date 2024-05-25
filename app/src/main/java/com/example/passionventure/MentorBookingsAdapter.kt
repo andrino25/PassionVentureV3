@@ -111,6 +111,7 @@ class MentorBookingsAdapter(
     private fun startPaymentDetailsActivity(booking: Booking) {
         // Start PaymentDetails activity with necessary data
         val intent = Intent(context, PaymentDetails::class.java)
+        intent.putExtra("bookingID", booking.bookingID)
         intent.putExtra("mentorName", booking.mentorName)
         intent.putExtra("currUser", booking.currUser)
         context.startActivity(intent)

@@ -15,8 +15,7 @@ import com.squareup.picasso.Picasso
 
 class PaymentDetails : AppCompatActivity() {
 
-    private lateinit var currentUser: String
-    private lateinit var mentorName: String
+    private lateinit var bookingID: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,20 +26,19 @@ class PaymentDetails : AppCompatActivity() {
             onBackPressed()
         }
 
-        currentUser = intent.getStringExtra("currUser").toString()
-        mentorName = intent.getStringExtra("mentorName").toString()
+        bookingID = intent.getStringExtra("bookingID").toString()
 
         fetchDetails()
     }
 
     private fun fetchDetails() {
         val paymentRef = FirebaseDatabase.getInstance().getReference("payments")
-        paymentRef.orderByChild("mentorName").equalTo(mentorName)
+        paymentRef.orderByChild("bookingID").equalTo(bookingID)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     for (paymentSnapshot in dataSnapshot.children) {
                         val paymentDetails = paymentSnapshot.getValue(Payment::class.java)
-                        if (paymentDetails != null && paymentDetails.currUser == currentUser) {
+                        if (paymentDetails != null) {
                             findViewById<TextView>(R.id.Receiver).text = "Receiver: ${paymentDetails.mentorName}"
                             findViewById<TextView>(R.id.Sender).text = "Sender: ${paymentDetails.currUser}"
                             findViewById<TextView>(R.id.paymentAmount).text = "Amount: ${paymentDetails.paymentAmount}"

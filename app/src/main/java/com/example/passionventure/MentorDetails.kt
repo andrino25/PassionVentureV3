@@ -15,6 +15,9 @@ import com.google.firebase.database.ValueEventListener
 import com.squareup.picasso.Picasso
 
 class MentorDetails : AppCompatActivity() {
+
+    private var bookingId: String = "" // Initialize with an empty string
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_mentor_details)
@@ -53,8 +56,9 @@ class MentorDetails : AppCompatActivity() {
             val currUser = intent.getStringExtra("currUser") ?: ""
             val currUserProfile = intent.getStringExtra("currUserProfile") ?: ""
             var status = "Pending"
+
             // Create a Booking instance
-            val booking = Booking(currUser, mentorName, mentorProfession,mentorImageUrl, currUserProfile, status)
+            val booking = Booking(bookingId, currUser, mentorName, mentorProfession, mentorImageUrl, currUserProfile, status)
 
             // Save booking to Firebase Realtime Database
             saveBookingToDatabase(booking)
@@ -63,42 +67,50 @@ class MentorDetails : AppCompatActivity() {
 
     private fun saveBookingToDatabase(booking: Booking) {
         val database = FirebaseDatabase.getInstance().reference.child("bookings")
+
+        // Save the new booking with generated booking ID
         val newBookingRef = database.push()
-        // Check if the booking already exists
-        database.orderByChild("mentorName").equalTo(booking.mentorName)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    var bookingExists = false
-                    for (bookingSnapshot in snapshot.children) {
-                        val existingBooking = bookingSnapshot.getValue(Booking::class.java)
-                        if (existingBooking != null && existingBooking.currUser == booking.currUser) {
-                            // Booking already exists
-                            bookingExists = true
-                            break
+        bookingId = newBookingRef.key.toString()
+
+        bookingId.let { id ->
+            // Set the booking ID for the booking object
+            val bookingWithId = booking.copy(bookingID = id)
+
+            // Check if there are existing bookings with the same mentorName and status "Pending" or "Accepted"
+            database.orderByChild("mentorName").equalTo(booking.mentorName)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        var canBook = true
+                        for (bookingSnapshot in dataSnapshot.children) {
+                            val existingBooking = bookingSnapshot.getValue(Booking::class.java)
+                            if (existingBooking != null && (existingBooking.bookingStatus == "Pending" || existingBooking.bookingStatus == "Accepted")) {
+                                // Prevent booking if there's an existing booking with status "Pending" or "Accepted"
+                                canBook = false
+                                break
+                            }
+                        }
+                        if (canBook) {
+                            // Save the new booking with generated booking ID if there's no existing booking with status "Pending" or "Accepted"
+                            newBookingRef.setValue(bookingWithId)
+                                .addOnSuccessListener {
+                                    // Handle successful booking
+                                    Toast.makeText(this@MentorDetails, "Booked successfully", Toast.LENGTH_SHORT).show()
+                                }
+                                .addOnFailureListener { e ->
+                                    // Handle failure
+                                    Toast.makeText(this@MentorDetails, "Booking failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
+                        } else {
+                            // Prevent booking if there's an existing booking with status "Pending" or "Accepted"
+                            Toast.makeText(this@MentorDetails, "Cannot book again. Previous booking is pending or accepted.", Toast.LENGTH_SHORT).show()
                         }
                     }
-                    if (bookingExists) {
-                        // Display toast indicating that the booking already exists
-                        Toast.makeText(this@MentorDetails, "Already booked this mentor.", Toast.LENGTH_SHORT).show()
-                    } else {
-                        // Save the new booking
-                        newBookingRef.setValue(booking)
-                            .addOnSuccessListener {
-                                // Handle successful booking
-                                Toast.makeText(this@MentorDetails, "Booked successfully", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                // Handle failure
-                                Toast.makeText(this@MentorDetails, "Booking failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Handle database error
+                        Toast.makeText(this@MentorDetails, "Failed to check existing bookings", Toast.LENGTH_SHORT).show()
                     }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle database error
-                    Toast.makeText(this@MentorDetails, "Failed to check existing booking", Toast.LENGTH_SHORT).show()
-                }
-            })
+                })
+        }
     }
-
-    }
+}

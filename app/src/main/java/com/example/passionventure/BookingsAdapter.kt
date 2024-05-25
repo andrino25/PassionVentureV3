@@ -15,8 +15,7 @@ import com.squareup.picasso.Picasso
 class BookingsAdapter(
     private val activity: Bookings,
     private val onCancelClick: (Booking, String) -> Unit,
-    private val onItemClick: (String) -> Unit,
-    private val currUser: String
+    private val onItemClick: (Booking, String) -> Unit
 ) : ListAdapter<Pair<Booking, String>, BookingsAdapter.BookingViewHolder>(BookingDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder {
@@ -28,7 +27,7 @@ class BookingsAdapter(
         val bookingPair = getItem(position)
         holder.bind(bookingPair.first, bookingPair.second)
         holder.itemView.setOnClickListener {
-            onItemClick(bookingPair.first.mentorName) // Pass the mentor's name when item is clicked
+            onItemClick(bookingPair.first, bookingPair.second) // Pass the booking and the key when item is clicked
         }
     }
 
@@ -77,9 +76,11 @@ class BookingsAdapter(
 
         private fun startPaymentDetailsActivity(booking: Booking) {
             // Start PaymentDetails activity with necessary data
-            val intent = Intent(itemView.context, PaymentDetails::class.java)
-            intent.putExtra("mentorName", booking.mentorName)
-            intent.putExtra("currUser", currUser)
+            val intent = Intent(itemView.context, PaymentDetails::class.java).apply {
+                putExtra("bookingID", booking.bookingID)
+                putExtra("mentorName", booking.mentorName)
+                putExtra("currUser", booking.currUser)
+            }
             itemView.context.startActivity(intent)
         }
     }
@@ -94,4 +95,3 @@ class BookingsAdapter(
         }
     }
 }
-

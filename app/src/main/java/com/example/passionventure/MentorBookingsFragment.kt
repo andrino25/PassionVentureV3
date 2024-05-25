@@ -97,7 +97,8 @@ class MentorBookingsFragment : Fragment() {
                 if (dataSnapshot.exists()) {
                     for (snapshot in dataSnapshot.children) {
                         val currentBooking = snapshot.getValue(Booking::class.java)
-                        if (currentBooking != null && currentBooking.currUser == booking.currUser) {
+                        if (currentBooking != null && currentBooking.bookingID == booking.bookingID) {
+                            // Ensure the booking being updated matches the booking ID
                             snapshot.ref.child("bookingStatus").setValue(newStatus)
                                 .addOnSuccessListener {
                                     Toast.makeText(context, "Booking $newStatus", Toast.LENGTH_SHORT).show()
@@ -119,6 +120,8 @@ class MentorBookingsFragment : Fragment() {
             }
         })
     }
+
+
 
     private fun showNoBookingsMessage() {
         binding.recyclerView.visibility = View.GONE

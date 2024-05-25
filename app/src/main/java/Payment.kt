@@ -3,5 +3,6 @@ data class Payment(
     val mentorName: String= "",
     val paymentMethod: String= "",
     val paymentAmount: String= "",
-    val imageUrl: String= ""
+    val imageUrl: String= "",
+    val bookingID: String = ""
 )
