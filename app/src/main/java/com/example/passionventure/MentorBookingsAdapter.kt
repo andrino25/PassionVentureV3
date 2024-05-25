@@ -2,6 +2,7 @@ package com.example.passionventure
 
 import Booking
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,7 @@ import com.squareup.picasso.Picasso
 class MentorBookingsAdapter(
     private val context: Context,
     private var bookingsList: MutableList<Booking>,
-    private val listener: OnItemClickListener
+    private val listener: OnItemClickListener,
 ) : RecyclerView.Adapter<MentorBookingsAdapter.BookingViewHolder>() {
 
     interface OnItemClickListener {
@@ -29,6 +30,7 @@ class MentorBookingsAdapter(
         private val acceptBtn: ImageButton = itemView.findViewById(R.id.acceptBtn)
         private val rejectBtn: ImageButton = itemView.findViewById(R.id.rejectBtn)
         private val statusTextView: TextView = itemView.findViewById(R.id.statusTextView)
+        private val viewDetails: TextView = itemView.findViewById(R.id.viewDetails)
 
         fun bind(booking: Booking) {
             userNameTextView.text = booking.currUser
@@ -46,11 +48,21 @@ class MentorBookingsAdapter(
                 statusTextView.text = booking.bookingStatus
 
                 val statusColor = when (booking.bookingStatus) {
-                    "Accepted" -> R.color.green   // Use your color resource for green
+                    "Accepted" -> R.color.green
+                    "Completed" -> R.color.green // Use your color resource for green
                     "Rejected" -> R.color.red     // Use your color resource for red
                     else -> android.R.color.black // Default color (black)
                 }
                 statusTextView.setTextColor(ContextCompat.getColor(itemView.context, statusColor))
+            }
+
+            if (booking.bookingStatus == "Completed") {
+                viewDetails.visibility = View.VISIBLE
+                viewDetails.setOnClickListener {
+                    startPaymentDetailsActivity(booking) // Start PaymentDetails activity when clicked
+                }
+            } else {
+                viewDetails.visibility = View.GONE
             }
 
             acceptBtn.setOnClickListener {
@@ -94,6 +106,14 @@ class MentorBookingsAdapter(
             bookingsList.add(booking)
             notifyItemMoved(index, bookingsList.size - 1)
         }
+    }
+
+    private fun startPaymentDetailsActivity(booking: Booking) {
+        // Start PaymentDetails activity with necessary data
+        val intent = Intent(context, PaymentDetails::class.java)
+        intent.putExtra("mentorName", booking.mentorName)
+        intent.putExtra("currUser", booking.currUser)
+        context.startActivity(intent)
     }
 }
 

@@ -63,4 +63,15 @@
         android:textColor="@color/black"
         android:text="Status"
         android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/viewDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/imageHolder"
+        android:layout_marginEnd="5dp"
+        android:visibility="gone"
+        android:text="View details"/>
+
 </RelativeLayout>

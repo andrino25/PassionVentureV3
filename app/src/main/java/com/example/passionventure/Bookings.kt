@@ -1,6 +1,7 @@
 package com.example.passionventure
 
 import Booking
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
@@ -21,6 +22,7 @@ class Bookings : AppCompatActivity() {
     private lateinit var bookingsAdapter: BookingsAdapter
     private lateinit var noBookingsTextView: TextView
     private lateinit var titleTextView: TextView
+    private lateinit var currentUser: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,16 +33,18 @@ class Bookings : AppCompatActivity() {
             onBackPressed()
         }
 
-        val currentUser = intent.getStringExtra("name").toString()
+        currentUser = intent.getStringExtra("name").toString()
         noBookingsTextView = findViewById(R.id.noBookingsTextView)
         titleTextView = findViewById(R.id.TitleTextView)
 
         // Set up RecyclerView
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        bookingsAdapter = BookingsAdapter(this) { booking, key ->
+        bookingsAdapter = BookingsAdapter(this, { booking, key ->
             showCancelDialog(booking, key)
-        }
+        }, { mentorName ->
+            startPaymentsActivity(mentorName)
+        }, currentUser)
         recyclerView.adapter = bookingsAdapter
 
         // Fetch bookings data from Firebase
@@ -79,6 +83,12 @@ class Bookings : AppCompatActivity() {
                 }
             })
     }
+    private fun startPaymentsActivity(mentorName: String) {
+        val intent = Intent(this, Payments::class.java)
+        intent.putExtra("mentorName", mentorName)
+        intent.putExtra("currUser", currentUser)
+        startActivity(intent)
+    }
 
     private fun showCancelDialog(booking: Booking, key: String) {
         AlertDialog.Builder(this)
@@ -101,3 +111,4 @@ class Bookings : AppCompatActivity() {
         databaseReference.child(key).removeValue()
     }
 }
+

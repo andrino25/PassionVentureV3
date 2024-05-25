@@ -1,6 +1,7 @@
 package com.example.passionventure
 
 import Booking
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +14,9 @@ import com.squareup.picasso.Picasso
 
 class BookingsAdapter(
     private val activity: Bookings,
-    private val onCancelClick: (Booking, String) -> Unit
+    private val onCancelClick: (Booking, String) -> Unit,
+    private val onItemClick: (String) -> Unit,
+    private val currUser: String
 ) : ListAdapter<Pair<Booking, String>, BookingsAdapter.BookingViewHolder>(BookingDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookingViewHolder {
@@ -22,7 +25,11 @@ class BookingsAdapter(
     }
 
     override fun onBindViewHolder(holder: BookingViewHolder, position: Int) {
-        holder.bind(getItem(position).first, getItem(position).second)
+        val bookingPair = getItem(position)
+        holder.bind(bookingPair.first, bookingPair.second)
+        holder.itemView.setOnClickListener {
+            onItemClick(bookingPair.first.mentorName) // Pass the mentor's name when item is clicked
+        }
     }
 
     inner class BookingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -31,6 +38,7 @@ class BookingsAdapter(
         private val mentorProfession: TextView = itemView.findViewById(R.id.mentorProfession)
         private val bookingStatus: TextView = itemView.findViewById(R.id.bookingStatus)
         private val cancelButton: ImageButton = itemView.findViewById(R.id.cancelButton)
+        private val viewDetails: TextView = itemView.findViewById(R.id.viewDetails)
 
         fun bind(booking: Booking, key: String) {
             Picasso.get().load(booking.mentorImageUrl).into(imageHolder)
@@ -40,13 +48,15 @@ class BookingsAdapter(
 
             val statusColor = when (booking.bookingStatus) {
                 "Pending" -> R.color.orange
-                "Accepted" -> R.color.green   // Use your color resource for green
-                "Rejected" -> R.color.red     // Use your color resource for red
+                "Accepted" -> R.color.green
+                "Completed" -> R.color.green
+                "Rejected" -> R.color.red
                 else -> android.R.color.black // Default color (black)
             }
             bookingStatus.setTextColor(itemView.context.getColor(statusColor))
+            itemView.isEnabled = booking.bookingStatus == "Accepted"
 
-            if (booking.bookingStatus != "Pending" ) {
+            if (booking.bookingStatus != "Pending") {
                 cancelButton.visibility = View.GONE
             } else {
                 cancelButton.visibility = View.VISIBLE
@@ -54,6 +64,23 @@ class BookingsAdapter(
                     onCancelClick(booking, key)
                 }
             }
+
+            if (booking.bookingStatus == "Completed") {
+                viewDetails.visibility = View.VISIBLE
+                viewDetails.setOnClickListener {
+                    startPaymentDetailsActivity(booking) // Start PaymentDetails activity when clicked
+                }
+            } else {
+                viewDetails.visibility = View.GONE
+            }
+        }
+
+        private fun startPaymentDetailsActivity(booking: Booking) {
+            // Start PaymentDetails activity with necessary data
+            val intent = Intent(itemView.context, PaymentDetails::class.java)
+            intent.putExtra("mentorName", booking.mentorName)
+            intent.putExtra("currUser", currUser)
+            itemView.context.startActivity(intent)
         }
     }
 
@@ -67,3 +94,4 @@ class BookingsAdapter(
         }
     }
 }
+

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PaymentDetails">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#34013f"
+        android:elevation="4dp"
+        android:layout_alignParentTop="true">
+
+        <!-- Back Button -->
+        <RelativeLayout
+            android:id="@+id/toolbarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/arrow"
+                android:contentDescription="Back"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/txt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/backButton"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:fontFamily="serif"
+                android:text="PassionVenture"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/Receiver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Receiver"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/Receiver"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/Sender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider1"
+                android:textColor="@color/black"
+                android:layout_marginTop="16dp"
+                android:text="Sender"
+                android:layout_marginStart="16dp"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/Sender"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/title1"
+                android:layout_marginTop="16dp"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Proof of Payment"
+                android:layout_marginStart="16dp"
+                android:layout_below="@id/divider2"/>
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/proofImg"
+                android:layout_marginStart="16dp"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:layout_below="@id/title1"
+                android:layout_marginTop="16dp"
+                app:shapeAppearanceOverlay="@drawable/rounded_corners"
+                android:layout_marginBottom="16dp"/>
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/proofImg"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/paymentAmount"
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:layout_marginStart="16dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider3"
+                android:layout_marginTop="16dp"
+                android:text="Payment Amount"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/paymentAmount"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/paymentMethod"
+                android:layout_marginStart="16dp"
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divider4"
+                android:layout_marginTop="16dp"
+                android:text="Payment Method"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <View
+                android:id="@+id/divider5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/paymentMethod"
+                android:background="@android:color/darker_gray" />
+
+            <TextView
+                android:id="@+id/status"
+                android:layout_marginStart="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_below="@id/divider5"
+                android:layout_marginTop="16dp"
+                android:text="Status"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="50dp"/>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

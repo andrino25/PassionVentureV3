@@ -64,7 +64,6 @@ class MentorDetails : AppCompatActivity() {
     private fun saveBookingToDatabase(booking: Booking) {
         val database = FirebaseDatabase.getInstance().reference.child("bookings")
         val newBookingRef = database.push()
-
         // Check if the booking already exists
         database.orderByChild("mentorName").equalTo(booking.mentorName)
             .addListenerForSingleValueEvent(object : ValueEventListener {

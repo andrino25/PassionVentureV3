@@ -44,39 +44,52 @@
         </RelativeLayout>
     </androidx.appcompat.widget.Toolbar>
 
-    <TextView
-        android:id="@+id/TitleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:fontFamily="serif"
-        android:text="Booked Mentors"
-        android:layout_below="@id/toolbar"
-        android:textColor="@color/black"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/TitleTextView"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        tools:listitem="@layout/booking_list"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
 
-    <TextView
-        android:id="@+id/noBookingsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/black"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/TitleTextView"
-        android:visibility="gone"
-        android:textStyle="bold"
-        android:text="No bookings. Book someone today"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/TitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:fontFamily="serif"
+                android:text="Booked Mentors"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/TitleTextView"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                tools:listitem="@layout/booking_list"/>
+
+            <TextView
+                android:id="@+id/noBookingsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/black"
+                android:layout_marginTop="20dp"
+                android:layout_below="@id/TitleTextView"
+                android:visibility="gone"
+                android:textStyle="bold"
+                android:text="No bookings. Book someone today"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
 
 </RelativeLayout>

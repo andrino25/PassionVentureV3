@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Payments">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#34013f"
+        android:elevation="4dp"
+        android:layout_alignParentTop="true">
+
+        <!-- Back Button -->
+        <RelativeLayout
+            android:id="@+id/toolbarContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/arrow"
+                android:contentDescription="Back"
+                tools:ignore="TouchTargetSizeCheck" />
+
+            <TextView
+                android:id="@+id/txt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/backButton"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:fontFamily="serif"
+                android:text="PassionVenture"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar"
+        tools:ignore="SpeakableTextPresentCheck">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="Payments"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="30sp"/>
+
+            <TextView
+                android:id="@+id/chooseTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose payment method"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                android:layout_below="@id/title"/>
+
+            <TextView
+                android:id="@+id/txt2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please select a method most convenient to you."
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:layout_below="@id/chooseTxt"/>
+
+
+
+                <RelativeLayout
+                    android:id="@+id/layout0"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txt2">
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginHorizontal="15dp"
+                        android:layout_centerHorizontal="true"
+                        android:padding="5dp"
+                        android:background="@drawable/rounded_corners">
+
+                    <RadioButton
+                        android:id="@+id/cardBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cards (Visa, VPay, Mastercard, Maestro)"/>
+
+                    <ImageView
+                        android:id="@+id/img1"
+                        android:layout_width="200dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/cardBtn"
+                        android:layout_alignStart="@id/cardBtn"
+                        android:layout_marginStart="30dp"
+                        android:src="@drawable/card"/>
+
+                    <RadioButton
+                        android:id="@+id/walletBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/img1"
+                        android:text="E-wallet / Digital Wallet (PayMaya, Gcash, 7-eleven, Coins.ph)"/>
+
+                    <ImageView
+                        android:id="@+id/img2"
+                        android:layout_width="200dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/walletBtn"
+                        android:layout_alignStart="@id/walletBtn"
+                        android:layout_marginStart="30dp"
+                        android:src="@drawable/wallets"/>
+
+                    <RadioButton
+                        android:id="@+id/bankTransferBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/img2"
+                        android:text="Bank Transfer (UnionBank, BPI, Cebuana)"/>
+
+                    <ImageView
+                        android:id="@+id/img3"
+                        android:layout_width="200dp"
+                        android:layout_height="50dp"
+                        android:layout_below="@id/bankTransferBtn"
+                        android:layout_alignStart="@id/bankTransferBtn"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:src="@drawable/bank"/>
+                    </RadioGroup>
+
+                </RelativeLayout>
+
+
+
+            <TextView
+                android:id="@+id/chooseTxt1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Process payment"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                android:layout_below="@id/layout0"/>
+
+            <TextView
+                android:id="@+id/txt3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please enter the amount you want to pay."
+                android:layout_marginTop="5dp"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:layout_below="@id/chooseTxt1"/>
+
+            <RelativeLayout
+                android:id="@+id/layout1"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_corners"
+                android:layout_marginHorizontal="15dp"
+                android:layout_below="@id/txt3">
+
+                <ImageView
+                    android:id="@+id/img4"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/peso_symbol"/>
+
+
+                <EditText
+                    android:id="@+id/amountEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:layout_toRightOf="@id/img4"
+                    android:inputType="number"
+                    android:textSize="15sp"
+                    tools:ignore="SpeakableTextPresentCheck"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/proofTxt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Proof of Payment"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:textSize="22sp"
+                android:layout_below="@id/layout1"/>
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/layout2"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/paymentBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/progressBar"
+                android:background="@drawable/button_corners"
+                android:layout_marginHorizontal="100dp"
+                android:layout_marginTop="30dp"
+                android:text="Submit Payment"
+                android:textColor="@color/white"
+                android:layout_marginBottom="50dp"/>
+
+
+            <RelativeLayout
+                android:id="@+id/layout2"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_corners"
+                android:layout_marginHorizontal="15dp"
+                android:layout_below="@id/proofTxt">
+
+                <TextView
+                    android:id="@+id/fileNameTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/attachBtn"
+                    android:layout_centerVertical="true"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:hint="The name of the file goes here"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"/>
+
+                <ImageButton
+                    android:id="@+id/attachBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:background="@drawable/attach"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</RelativeLayout>
