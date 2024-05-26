@@ -16,9 +16,11 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.passionventure.databinding.FragmentAddContributionBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import java.util.UUID
 
@@ -68,8 +70,8 @@ class addContributionFragment : Fragment() {
 
             // Check if title, content, and date are not empty
             if (title.isNotEmpty() && content.isNotEmpty() && datePublished.isNotEmpty() && imageUri != null) {
-                // Upload image to Firebase Storage
-                uploadImageToStorage()
+                // Check if the title already exists
+                checkTitleAndUploadImage(title, content, datePublished)
             } else {
                 // Show error message if any field is empty
                 Toast.makeText(requireContext(), "Please fill in all fields and attach an image", Toast.LENGTH_SHORT).show()
@@ -134,8 +136,32 @@ class addContributionFragment : Fragment() {
         return "$day/$month/$year"
     }
 
+    // Function to check title and upload image to Firebase Storage if title is unique
+    private fun checkTitleAndUploadImage(title: String, content: String, datePublished: String) {
+        progressBar.visibility = View.VISIBLE
+        val contributionRef = FirebaseDatabase.getInstance().getReference("contributions")
+
+        // Check if a contribution with the same title exists
+        contributionRef.orderByChild("title").equalTo(title).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(requireContext(), "A contribution with this title already exists", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Title is unique, proceed to upload image
+                    uploadImageToStorage(title, content, datePublished)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                progressBar.visibility = View.GONE
+                Toast.makeText(requireContext(), "Error checking title: ${databaseError.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
     // Function to upload image to Firebase Storage
-    private fun uploadImageToStorage() {
+    private fun uploadImageToStorage(title: String, content: String, datePublished: String) {
         val fileName = UUID.randomUUID().toString()
         val storageRef = FirebaseStorage.getInstance().getReference("contributions/$fileName")
 
@@ -144,7 +170,7 @@ class addContributionFragment : Fragment() {
         storageRef.putFile(imageUri!!)
             .addOnSuccessListener { taskSnapshot ->
                 taskSnapshot.storage.downloadUrl.addOnSuccessListener { uri ->
-                    saveContributionToDatabase(uri.toString())
+                    saveContributionToDatabase(title, content, datePublished, uri.toString())
                     progressBar.visibility = View.GONE
                 }
             }
@@ -155,17 +181,11 @@ class addContributionFragment : Fragment() {
     }
 
     // Function to save contribution to database
-    private fun saveContributionToDatabase(imageUrl: String) {
-        val title = binding.resourceEditText.text.toString().trim()
-        val content = binding.contentEditText.text.toString().trim()
-        val datePublished = getDateFromDatePicker(binding.datePublished)
-
-        progressBar.visibility = View.VISIBLE
+    private fun saveContributionToDatabase(title: String, content: String, datePublished: String, imageUrl: String) {
         val contributionRef = FirebaseDatabase.getInstance().getReference("contributions")
 
         // Generate the key using push() method and save it to contributionId
         val contributionId = contributionRef.push().key ?: ""
-
         val contribution = Contribution(contributionId, mentorName, title, content, datePublished, imageUrl)
 
         contributionRef.child(contributionId).setValue(contribution)
@@ -175,8 +195,8 @@ class addContributionFragment : Fragment() {
                 // Optionally, you can navigate to another fragment/activity or perform any other action
             }
             .addOnFailureListener { e ->
+                progressBar.visibility = View.GONE
                 Toast.makeText(requireContext(), "Failed to save contribution: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
 }

@@ -104,10 +104,10 @@ class postJobFragment : Fragment() {
         val jobExpSpinner = binding.jobExp
         val jobAttainmentSpinner = binding.jobAttainment
 
-        val jobTitle = jobTitleEditText.text.toString()
-        val jobSalary = jobSalaryEditText.text.toString()
-        val jobDescription = jobDescriptionEditText.text.toString()
-        val jobCategory = jobCategoryEditText.text.toString()
+        val jobTitle = jobTitleEditText.text.toString().trim()
+        val jobSalary = jobSalaryEditText.text.toString().trim()
+        val jobDescription = jobDescriptionEditText.text.toString().trim()
+        val jobCategory = jobCategoryEditText.text.toString().trim()
         val jobExp = jobExpSpinner.selectedItem.toString()
         val jobAttainment = jobAttainmentSpinner.selectedItem.toString()
 
@@ -122,25 +122,39 @@ class postJobFragment : Fragment() {
         }
 
         val job = Jobs(jobTitle, jobDescription, jobCategory, jobExp, jobAttainment, company, companyDescription, jobSalary, address)
+        val jobRef = FirebaseDatabase.getInstance().getReference("jobs")
 
-        val jobId = databaseReference.push().key
+        // Check if a job with the same title exists
+        jobRef.orderByChild("title").equalTo(jobTitle).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    showToast("A job with this title already exists")
+                } else {
+                    val jobId = jobRef.push().key
+                    if (jobId != null) {
+                        jobRef.child(jobId).setValue(job)
+                            .addOnSuccessListener {
+                                jobTitleEditText.setText("")
+                                jobDescriptionEditText.setText("")
+                                jobCategoryEditText.setText("")
+                                jobSalaryEditText.setText("")
+                                jobExpSpinner.setSelection(0)
+                                jobAttainmentSpinner.setSelection(0)
+                                showToast("Job posted successfully")
+                            }
+                            .addOnFailureListener {
+                                showToast("Failed to post job")
+                            }
+                    }
+                }
+            }
 
-        if (jobId != null) {
-            databaseReference.child(jobId).setValue(job)
-                .addOnSuccessListener {
-                    jobTitleEditText.setText("")
-                    jobDescriptionEditText.setText("")
-                    jobCategoryEditText.setText("")
-                    jobSalaryEditText.setText("")
-                    jobExpSpinner.setSelection(0)
-                    jobAttainmentSpinner.setSelection(0)
-                    showToast("Job posted successfully")
-                }
-                .addOnFailureListener {
-                    showToast("Failed to post job")
-                }
-        }
+            override fun onCancelled(databaseError: DatabaseError) {
+                showToast("Error checking title: ${databaseError.message}")
+            }
+        })
     }
+
 
     private fun getUserData(username: String) {
         userReference.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(object :
