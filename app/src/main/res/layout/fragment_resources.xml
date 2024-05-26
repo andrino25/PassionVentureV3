@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_marginHorizontal="20dp"
                 android:layout_height="50dp"
-                android:hint="Search a mentor"
+                android:hint="Search a resource"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:layout_below="@id/title"
