@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.imageview.ShapeableImageView
@@ -24,6 +25,11 @@ class ApplicantDetails : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_applicant_details)
+
+        val backBtn = findViewById<ImageButton>(R.id.backButton)
+        backBtn.setOnClickListener {
+            onBackPressed()
+        }
 
         val username = intent.getStringExtra("username")
 

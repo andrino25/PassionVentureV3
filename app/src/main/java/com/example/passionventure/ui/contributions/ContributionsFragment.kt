@@ -3,6 +3,7 @@ package com.example.passionventure.ui.contributions
 import Contribution
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +28,7 @@ class ContributionsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             mentorName = it.getString("username")
+            Log.d("MentorName", "Mentor Name: $mentorName")
         }
     }
 
@@ -39,7 +41,6 @@ class ContributionsFragment : Fragment() {
         val root: View = binding.root
 
         contributionsRef = FirebaseDatabase.getInstance().getReference("contributions")
-
         contributionList = mutableListOf()
         contributionsAdapter = ContributionAdapter(requireContext(), contributionList,
             { contribution ->
@@ -50,6 +51,11 @@ class ContributionsFragment : Fragment() {
             },
             true // isEditable
         )
+
+        binding.recyclerView.apply {
+            adapter = contributionsAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
 
         // Query contributions based on mentorName
         mentorName?.let { fetchContributions(it) }
@@ -62,14 +68,14 @@ class ContributionsFragment : Fragment() {
         contributionsRef.orderByChild("mentorName").equalTo(mentorName)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val contributions = mutableListOf<Contribution>()
+                    contributionList.clear()
                     for (childSnapshot in snapshot.children) {
                         val contribution = childSnapshot.getValue(Contribution::class.java)
                         contribution?.let {
-                            contributions.add(it)
+                            contributionList.add(it)
                         }
                     }
-                    contributionsAdapter.submitList(contributions)
+                    contributionsAdapter.submitList(contributionList)
                 }
 
                 override fun onCancelled(error: DatabaseError) {

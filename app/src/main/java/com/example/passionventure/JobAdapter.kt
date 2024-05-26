@@ -1,4 +1,3 @@
-// JobAdapter.kt
 package com.example.passionventure
 
 import Jobs
@@ -12,8 +11,9 @@ import android.view.ViewGroup
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.passionventure.ui.matching.MatchingFragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -23,9 +23,12 @@ import java.util.Locale
 class JobAdapter(
     private val context: Context,
     private var jobList: List<Jobs>,
-    private var resumeList: List<Resume>,
-    private val onItemClick: (Jobs, Resume?) -> Unit // Callback function
-) : RecyclerView.Adapter<JobAdapter.JobViewHolder>() {
+    private val resumeList: List<Resume>,
+    private val onItemClick: (Jobs, Resume?) -> Unit, // Callback function
+    private val isEditable: Boolean // Editable flag
+) : ListAdapter<Jobs, JobAdapter.JobViewHolder>(JobDiffCallback()) {
+
+    private var filteredList: List<Jobs> = jobList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
         val itemView = LayoutInflater.from(parent.context)
@@ -34,23 +37,30 @@ class JobAdapter(
     }
 
     override fun onBindViewHolder(holder: JobViewHolder, position: Int) {
-        val currentItem = jobList[position]
+        val currentItem = filteredList[position]
         val currentResume = resumeList.find { it.jobTitle == currentItem.title && it.jobCompany == currentItem.company }
         holder.bind(currentItem, currentResume)
     }
-
-    override fun getItemCount() = jobList.size
 
     inner class JobViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val jobDesc: TextView = itemView.findViewById(R.id.jobDesc)
         private val jobCompany: TextView = itemView.findViewById(R.id.jobCompany)
         private val jobCategory: TextView = itemView.findViewById(R.id.jobCategory)
 
-        init {
-            // Set long click listener to show the popup menu
-            itemView.setOnLongClickListener { view ->
-                showPopupMenu(view, jobList[adapterPosition])
-                true
+        fun bind(job: Jobs, resume: Resume?) {
+            jobDesc.text = job.title
+            jobCompany.text = "✅ ${job.company}"
+            jobCategory.text = "⚫ ${job.category}"
+
+            itemView.setOnClickListener {
+                onItemClick(job, resume)
+            }
+
+            if (isEditable) {
+                itemView.setOnLongClickListener { view ->
+                    showPopupMenu(view, job)
+                    true
+                }
             }
         }
 
@@ -86,7 +96,6 @@ class JobAdapter(
             popupMenu.show()
         }
 
-
         private fun showDeleteConfirmationDialog(job: Jobs) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle("Delete Job")
@@ -110,39 +119,49 @@ class JobAdapter(
                             snapshot.ref.removeValue().addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     Toast.makeText(context, "Deleted job successfully", Toast.LENGTH_SHORT).show()
-                                    jobList = jobList.filterNot { it.title == jobTitle }
-                                    notifyDataSetChanged()
+                                    // Remove the job from the list and update the adapter
+                                    val newList = currentList.toMutableList().apply {
+                                        removeAll { it.title == jobTitle }
+                                    }
+                                    submitList(newList)
                                 } else {
-                                    // Handle the error
-                                    // Display a toast or log the error message
-                                    // For example:
                                     Toast.makeText(context, "Failed to delete job", Toast.LENGTH_SHORT).show()
                                 }
                             }
                         }
                     } else {
-                        // Job with the given title not found
-                        // Handle this case if needed
+                        Toast.makeText(context, "Job not found", Toast.LENGTH_SHORT).show()
                     }
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle error
-                    // For example:
                     Toast.makeText(context, "Error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
                 }
             })
         }
-
-        fun bind(job: Jobs, resume: Resume?) {
-            jobDesc.text = job.title
-            jobCompany.text = "✅ ${job.company}"
-            jobCategory.text = "⚫ ${job.category}"
-
-            itemView.setOnClickListener {
-                onItemClick(job, resume)
-            }
-        }
     }
 
+    fun filter(text: String) {
+        val searchText = text.toLowerCase(Locale.getDefault())
+        filteredList = if (searchText.isEmpty()) {
+            jobList
+        } else {
+            jobList.filter { job ->
+                job.title.toLowerCase(Locale.getDefault()).contains(searchText) ||
+                        job.company.toLowerCase(Locale.getDefault()).contains(searchText) ||
+                        job.category.toLowerCase(Locale.getDefault()).contains(searchText)
+            }
+        }
+        submitList(filteredList)
+    }
+
+    class JobDiffCallback : DiffUtil.ItemCallback<Jobs>() {
+        override fun areItemsTheSame(oldItem: Jobs, newItem: Jobs): Boolean {
+            return oldItem.title == newItem.title && oldItem.company == newItem.company
+        }
+
+        override fun areContentsTheSame(oldItem: Jobs, newItem: Jobs): Boolean {
+            return oldItem == newItem
+        }
+    }
 }

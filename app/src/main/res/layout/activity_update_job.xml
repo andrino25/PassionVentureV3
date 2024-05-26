@@ -100,6 +100,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
+                android:enabled="false"
                 android:layout_below="@id/editTextJobDesc"
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="16dp"
@@ -183,6 +184,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="10dp"
+                android:enabled="false"
                 android:hint="Company Description"
                 tools:ignore="TouchTargetSizeCheck" />
 

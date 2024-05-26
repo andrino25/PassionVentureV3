@@ -4,6 +4,8 @@ import Jobs
 import Resume
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +41,7 @@ class MatchingFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         jobList = mutableListOf()
         resumeList = mutableListOf() // Initialize resume list
-        jobListAdapter = JobAdapter(requireContext(), jobList, resumeList) { job, resume ->
+        jobListAdapter = JobAdapter(requireContext(), jobList, resumeList, { job, resume ->
             // Handle item click inside the fragment
             val intent = Intent(requireContext(), JobDetails::class.java).apply {
                 putExtra("jobTitle", job.title)
@@ -54,10 +56,24 @@ class MatchingFragment : Fragment() {
                 putExtra("username", currUser)
             }
             startActivity(intent)
-        }
+        }, false) // Set isEditable to false
         recyclerView.adapter = jobListAdapter
 
         fetchDataFromDatabase()
+
+        binding.searchTab.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not needed
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                jobListAdapter.filter(s.toString()) // Apply filter based on search query
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                // Not needed
+            }
+        })
 
         return root
     }
@@ -78,7 +94,7 @@ class MatchingFragment : Fragment() {
                         jobList.add(it)
                     }
                 }
-                jobListAdapter.notifyDataSetChanged() // Update the adapter with the new job list
+                jobListAdapter.submitList(jobList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

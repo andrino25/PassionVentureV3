@@ -58,12 +58,12 @@ class offeredJobsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
         jobList = mutableListOf()
         resumeList = mutableListOf() // Initialize resume list
-        jobAdapter = JobAdapter(requireContext(), jobList, resumeList) { job, resume ->
+        jobAdapter = JobAdapter(requireContext(), jobList, resumeList, { job, resume ->
             val intent = Intent(requireContext(), ResumeList::class.java).apply {
-            putExtra("jobTitle", job.title)
-        }
+                putExtra("jobTitle", job.title)
+            }
             startActivity(intent)
-        }
+        }, true) // Set isEditable to true
         recyclerView.adapter = jobAdapter
 
         // Fetch jobs and resumes
@@ -128,7 +128,7 @@ class offeredJobsFragment : Fragment() {
                     }
                 }
                 // After fetching resumes, update the adapter with the new resume list
-                jobAdapter.notifyDataSetChanged()
+                jobAdapter.submitList(jobList) // Submit the updated job list to the adapter
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
