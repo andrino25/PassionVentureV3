@@ -38,6 +38,20 @@
                 android:padding="10dp"
                 android:background="@drawable/rounded_corners" />
 
+            <TextView
+                android:id="@+id/textViewNoItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:fontFamily="serif"
+                android:text="Unable to search that resource."
+                android:layout_below="@id/searchTab"
+                android:textColor="@color/black"
+                android:visibility="invisible"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="wrap_content"

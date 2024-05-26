@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +25,7 @@ class ResourcesFragment : Fragment() {
     private lateinit var contributionsAdapter: ContributionAdapter
     private lateinit var contributionsRef: DatabaseReference
     private lateinit var contributionList: MutableList<Contribution>
+    private lateinit var noItemsTextView: TextView
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -37,6 +39,7 @@ class ResourcesFragment : Fragment() {
         _binding = FragmentResourcesBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        noItemsTextView = binding.textViewNoItems
         // Initialize Firebase database reference
         contributionsRef = FirebaseDatabase.getInstance().getReference("contributions")
         contributionList = mutableListOf()
@@ -68,6 +71,7 @@ class ResourcesFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 contributionsAdapter.filter(s.toString())
+                noItemsTextView.visibility = if (contributionsAdapter.itemCount == 0) View.VISIBLE else View.INVISIBLE
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -91,6 +95,7 @@ class ResourcesFragment : Fragment() {
                 }
                 // Update adapter's list with fetched contributions
                 contributionsAdapter.submitList(contributionList)
+                noItemsTextView.visibility = if (contributionList.isEmpty()) View.VISIBLE else View.INVISIBLE
             }
 
             override fun onCancelled(error: DatabaseError) {

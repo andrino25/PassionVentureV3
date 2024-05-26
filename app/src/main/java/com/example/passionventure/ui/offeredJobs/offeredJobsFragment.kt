@@ -29,6 +29,7 @@ class offeredJobsFragment : Fragment() {
     private lateinit var jobAdapter: JobAdapter
     private lateinit var recyclerView: RecyclerView
     private lateinit var resumeList: MutableList<Resume> // Add resumeList
+    private lateinit var noItemsTextView: TextView // Reference to the TextView
 
     // This property is only valid between onCreateView and onDestroyView.
     private val binding get() = _binding!!
@@ -65,6 +66,9 @@ class offeredJobsFragment : Fragment() {
             startActivity(intent)
         }, true) // Set isEditable to true
         recyclerView.adapter = jobAdapter
+
+        // Reference to the no items TextView
+        noItemsTextView = binding.textViewNoItems
 
         // Fetch jobs and resumes
         retrieveUserName(username)
@@ -108,6 +112,7 @@ class offeredJobsFragment : Fragment() {
                     }
                     // After fetching jobs, fetch resumes
                     fetchResumesForJobs(jobList)
+                    updateNoItemsTextViewVisibility()
                 }
 
                 override fun onCancelled(databaseError: DatabaseError) {
@@ -129,11 +134,20 @@ class offeredJobsFragment : Fragment() {
                 }
                 // After fetching resumes, update the adapter with the new resume list
                 jobAdapter.submitList(jobList) // Submit the updated job list to the adapter
+                updateNoItemsTextViewVisibility()
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
                 // Handle error
             }
         })
+    }
+
+    private fun updateNoItemsTextViewVisibility() {
+        if (jobList.isEmpty()) {
+            noItemsTextView.visibility = View.VISIBLE
+        } else {
+            noItemsTextView.visibility = View.GONE
+        }
     }
 }

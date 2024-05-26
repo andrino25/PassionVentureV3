@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +28,7 @@ class MatchingFragment : Fragment() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var recyclerView: RecyclerView
     private lateinit var currUser: String
+    private lateinit var noItemsTextView: TextView // Reference to the TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +39,7 @@ class MatchingFragment : Fragment() {
         val root: View = binding.root
 
         recyclerView = binding.recyclerView
+        noItemsTextView = binding.textViewNoItems // Initialize the TextView reference
         currUser = arguments?.getString("username").toString()
         recyclerView.layoutManager = LinearLayoutManager(activity)
         jobList = mutableListOf()
@@ -68,6 +71,8 @@ class MatchingFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 jobListAdapter.filter(s.toString()) // Apply filter based on search query
+                // Update visibility of noItemsTextView based on filtered list size
+                noItemsTextView.visibility = if (jobListAdapter.itemCount == 0) View.VISIBLE else View.INVISIBLE
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -95,6 +100,8 @@ class MatchingFragment : Fragment() {
                     }
                 }
                 jobListAdapter.submitList(jobList)
+                // Update visibility of noItemsTextView based on job list size
+                noItemsTextView.visibility = if (jobList.isEmpty()) View.VISIBLE else View.INVISIBLE
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

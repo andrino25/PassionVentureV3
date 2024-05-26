@@ -92,6 +92,7 @@ class Payments : AppCompatActivity() {
                 Toast.makeText(this, "Please attach an image", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
+            uploadImageToStorage()
         }
     }
 
