@@ -11,7 +11,7 @@
         android:title="Add Contribution" />
     <item
         android:id="@+id/navigation_mentor_bookings"
-        android:icon="@drawable/add_logo"
+        android:icon="@drawable/bookings"
         android:title="Bookings" />
 
 </menu>
