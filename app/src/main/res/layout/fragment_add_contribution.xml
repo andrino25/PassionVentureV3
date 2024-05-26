@@ -24,6 +24,7 @@
                 android:layout_centerHorizontal="true"
                 android:textColor="@color/black"
                 android:textSize="30sp"
+                android:fontFamily="serif"
                 android:textStyle="bold"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"/>

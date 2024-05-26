@@ -62,6 +62,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:text="Payments"
+                android:fontFamily="serif"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 android:textSize="30sp"/>

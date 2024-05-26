@@ -23,6 +23,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
                 android:text="Mentors"
+                android:fontFamily="serif"
                 android:textColor="@color/black"
                 android:textSize="30sp"
                 android:textStyle="bold" />
@@ -53,6 +54,20 @@
                     android:textSize="26sp"
                     android:gravity="center"
                     android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/textViewNoItems"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="20dp"
+                        android:fontFamily="serif"
+                        android:text="Unable to search that job."
+                        android:layout_below="@id/textView1"
+                        android:textColor="@color/black"
+                        android:visibility="invisible"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
 
 
                 <androidx.recyclerview.widget.RecyclerView

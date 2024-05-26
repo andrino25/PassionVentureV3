@@ -55,11 +55,24 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/TitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="Booked Mentors"
+                android:fontFamily="serif"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/Receiver"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="20dp"
                 android:text="Receiver"
+                android:layout_below="@id/TitleTextView"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:layout_marginStart="16dp"

@@ -26,6 +26,7 @@ class MentorsFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var mentorsAdapter: MentorAdapter
     private lateinit var mentorsList: MutableList<User>
+    private lateinit var noItemsTextView: TextView
     private var _binding: FragmentMentorsBinding? = null
 
     // This property is only valid between onCreateView and
@@ -43,6 +44,7 @@ class MentorsFragment : Fragment() {
         _binding = FragmentMentorsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        noItemsTextView = binding.textViewNoItems
         val currUser = activity?.intent?.getStringExtra("name").toString()
         val currUserprofile = activity?.intent?.getStringExtra("userProfile").toString()
         recyclerView = binding.recyclerView
@@ -67,6 +69,7 @@ class MentorsFragment : Fragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 mentorsAdapter.filter(s.toString())
+                noItemsTextView.visibility = if (mentorsAdapter.itemCount == 0) View.VISIBLE else View.INVISIBLE
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -93,6 +96,7 @@ class MentorsFragment : Fragment() {
                         mentor?.let { mentorsList.add(it) }
                     }
                     mentorsAdapter.notifyDataSetChanged()
+                    noItemsTextView.visibility = if (mentorsList.isEmpty()) View.VISIBLE else View.INVISIBLE
                 }
 
                 override fun onCancelled(error: DatabaseError) {
