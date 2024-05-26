@@ -60,7 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
-                android:text="Booked Mentors"
+                android:text="Payment Details"
                 android:fontFamily="serif"
                 android:textColor="@color/black"
                 android:textSize="30sp"
