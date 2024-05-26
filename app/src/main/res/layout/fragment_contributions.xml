@@ -28,6 +28,20 @@
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="20dp"/>
 
+            <TextView
+                android:id="@+id/textViewNoItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:fontFamily="serif"
+                android:text="No contributions posted. Contribute something."
+                android:layout_below="@id/title"
+                android:textColor="@color/black"
+                android:visibility="invisible"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"

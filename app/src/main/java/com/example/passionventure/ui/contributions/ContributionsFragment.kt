@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.passionventure.ContributionAdapter
@@ -22,6 +23,7 @@ class ContributionsFragment : Fragment() {
     private lateinit var contributionsRef: DatabaseReference
     private var mentorName: String? = null
     private lateinit var contributionList: MutableList<Contribution>
+    private lateinit var noItemsTextView: TextView
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +42,7 @@ class ContributionsFragment : Fragment() {
         _binding = FragmentContributionsBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        noItemsTextView = binding.textViewNoItems
         contributionsRef = FirebaseDatabase.getInstance().getReference("contributions")
         contributionList = mutableListOf()
         contributionsAdapter = ContributionAdapter(requireContext(), contributionList,
@@ -76,6 +79,7 @@ class ContributionsFragment : Fragment() {
                         }
                     }
                     contributionsAdapter.submitList(contributionList)
+                    noItemsTextView.visibility = if (contributionList.isEmpty()) View.VISIBLE else View.INVISIBLE
                 }
 
                 override fun onCancelled(error: DatabaseError) {
