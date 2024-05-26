@@ -3,6 +3,7 @@ package com.example.passionventure
 
 import Jobs
 import Resume
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -76,13 +77,27 @@ class JobAdapter(
                     }
                     R.id.delete -> {
                         // Handle delete job
-                        deleteJob(job.title)
+                        showDeleteConfirmationDialog(job)
                         true
                     }
                     else -> false
                 }
             }
             popupMenu.show()
+        }
+
+
+        private fun showDeleteConfirmationDialog(job: Jobs) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Delete Job")
+            builder.setMessage("Are you sure you want to delete this job?")
+            builder.setPositiveButton("Yes") { _, _ ->
+                deleteJob(job.title)
+            }
+            builder.setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.create().show()
         }
 
         private fun deleteJob(jobTitle: String) {

@@ -7,18 +7,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.PopupMenu
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.database.*
+import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
 
 class ContributionAdapter(
     private val context: Context,
-    private val onItemClick: (Contribution) -> Unit
+    private val onItemClick: (Contribution) -> Unit,
+    private val isEditable: Boolean
 ) : ListAdapter<Contribution, ContributionAdapter.ContributionViewHolder>(ContributionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContributionViewHolder {
@@ -28,7 +29,7 @@ class ContributionAdapter(
 
     override fun onBindViewHolder(holder: ContributionViewHolder, position: Int) {
         val contribution = getItem(position)
-        holder.bind(contribution)
+        holder.bind(contribution, context, onItemClick, isEditable)
     }
 
     inner class ContributionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -38,26 +39,35 @@ class ContributionAdapter(
         private val mentorNameTextView: TextView = itemView.findViewById(R.id.mentorName)
         private val datePublishedTextView: TextView = itemView.findViewById(R.id.datePublished)
 
-        init {
-            // Set long click listener to show the popup menu
-            itemView.setOnLongClickListener { view ->
-                showPopupMenu(view, getItem(adapterPosition))
-                true
+        fun bind(
+            contribution: Contribution,
+            context: Context,
+            onItemClick: (Contribution) -> Unit,
+            isEditable: Boolean
+        ) {
+            Picasso.get().load(contribution.imageUrl).into(imageView)
+            titleTextView.text = contribution.title
+            mentorNameTextView.text = "Published by: ${contribution.mentorName}"
+            datePublishedTextView.text = contribution.datePublished
+
+            itemView.setOnClickListener {
+                onItemClick(contribution)
             }
 
-            // Set click listener for item
-            itemView.setOnClickListener {
-                onItemClick(getItem(adapterPosition))
+            if (isEditable) {
+                itemView.setOnLongClickListener {
+                    showPopupMenu(context, it, contribution)
+                    true
+                }
             }
         }
 
-        private fun showPopupMenu(view: View, contribution: Contribution) {
+        private fun showPopupMenu(context: Context, view: View, contribution: Contribution) {
             val popupMenu = PopupMenu(context, view)
             popupMenu.menuInflater.inflate(R.menu.job_item_menu, popupMenu.menu)
-            popupMenu.setOnMenuItemClickListener { menuItem ->
-                when (menuItem.itemId) {
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
                     R.id.update -> {
-                        // Handle update contribution
                         val intent = Intent(context, UpdateContribution::class.java).apply {
                             putExtra("id", contribution.id)
                             putExtra("contributionTitle", contribution.title)
@@ -67,8 +77,7 @@ class ContributionAdapter(
                         true
                     }
                     R.id.delete -> {
-                        // Handle delete contribution
-                        deleteContribution(contribution.id)
+                        showDeleteConfirmationDialog(contribution)
                         true
                     }
                     else -> false
@@ -77,23 +86,28 @@ class ContributionAdapter(
             popupMenu.show()
         }
 
+        private fun showDeleteConfirmationDialog(contribution: Contribution) {
+            val builder = AlertDialog.Builder(context)
+            builder.setTitle("Delete Contribution")
+            builder.setMessage("Are you sure you want to delete this contribution?")
+            builder.setPositiveButton("Yes") { _, _ ->
+                deleteContribution(contribution.id)
+            }
+            builder.setNegativeButton("No") { dialog, _ ->
+                dialog.dismiss()
+            }
+            builder.create().show()
+        }
+
         private fun deleteContribution(contributionId: String) {
             val contributionsReference = FirebaseDatabase.getInstance().getReference("contributions")
             contributionsReference.child(contributionId).removeValue().addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(context, "Deleted contribution successfully", Toast.LENGTH_SHORT).show()
-                    notifyDataSetChanged()
+                    // Optionally notify the adapter of the removal, but ListAdapter should handle it automatically
                 } else {
-                    Toast.makeText(context, "Failed to delete contribution", Toast.LENGTH_SHORT).show()
+                    // Handle failure
                 }
             }
-        }
-
-        fun bind(contribution: Contribution) {
-            Picasso.get().load(contribution.imageUrl).into(imageView)
-            titleTextView.text = contribution.title
-            mentorNameTextView.text = "By: ${contribution.mentorName}"
-            datePublishedTextView.text = contribution.datePublished
         }
     }
 
@@ -107,3 +121,4 @@ class ContributionAdapter(
         }
     }
 }
+

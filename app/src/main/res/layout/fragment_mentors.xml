@@ -22,10 +22,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="20dp"
-                android:fontFamily="serif"
                 android:text="Mentors"
                 android:textColor="@color/black"
-                android:textSize="40sp"
+                android:textSize="30sp"
                 android:textStyle="bold" />
 
             <EditText
@@ -35,7 +34,7 @@
                 android:layout_height="50dp"
                 android:hint="Search a mentor"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:layout_below="@id/TitleTextView"
                 android:padding="10dp"
                 android:background="@drawable/rounded_corners" />

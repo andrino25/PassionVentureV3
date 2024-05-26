@@ -87,7 +87,7 @@ class addContributionFragment : Fragment() {
     // Open file picker to select an image
     private fun openFilePicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "*/*" // Allow any file type to be selected
+        intent.type = "image/*"
         startActivityForResult(intent, PICK_FILE_REQUEST_CODE)
     }
 

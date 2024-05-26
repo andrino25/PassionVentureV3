@@ -102,7 +102,7 @@ class MentorDetails : AppCompatActivity() {
                                 }
                         } else {
                             // Prevent booking if there's an existing booking with status "Pending" or "Accepted"
-                            Toast.makeText(this@MentorDetails, "Cannot book again. Previous booking is pending or accepted.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@MentorDetails, "Cannot book again. Previous booking of this mentor is in progress", Toast.LENGTH_SHORT).show()
                         }
                     }
 

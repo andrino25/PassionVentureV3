@@ -75,17 +75,29 @@ class Payments : AppCompatActivity() {
         // Set up the payment button click listener
         paymentBtn.setOnClickListener {
             paymentAmount = amountEditText.text.toString()
-            if (imageUri != null) {
-                uploadImageToStorage()
-            } else {
+
+            if (radioGroup.checkedRadioButtonId == -1) {
+                Toast.makeText(this, "Please select a payment method", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (paymentAmount.isEmpty()) {
+                Toast.makeText(this, "Please enter a payment amount", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+
+            // Check if image is attached
+            if (imageUri == null) {
                 Toast.makeText(this, "Please attach an image", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
         }
     }
 
     private fun openFilePicker() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "*/*"
+        intent.type = "image/*"
         startActivityForResult(intent, PICK_FILE_REQUEST_CODE)
     }
 

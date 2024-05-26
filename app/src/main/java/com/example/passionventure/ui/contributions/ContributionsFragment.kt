@@ -20,6 +20,7 @@ class ContributionsFragment : Fragment() {
     private lateinit var contributionsAdapter: ContributionAdapter
     private lateinit var contributionsRef: DatabaseReference
     private var mentorName: String? = null
+    private lateinit var contributionList: MutableList<Contribution>
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,12 +50,13 @@ class ContributionsFragment : Fragment() {
 
     private fun setupRecyclerView() {
         // Initialize the adapter with context and click listener
-        contributionsAdapter = ContributionAdapter(requireContext()) { contribution ->
+        contributionsAdapter = ContributionAdapter(requireContext(),
+            { contribution ->
             val intent = Intent(requireContext(), ContributionDetails::class.java).apply {
                 putExtra("id", contribution.id)
             }
             startActivity(intent)
-        }
+        }, true)  // isEditable = true
 
         binding.recyclerView.apply {
             adapter = contributionsAdapter

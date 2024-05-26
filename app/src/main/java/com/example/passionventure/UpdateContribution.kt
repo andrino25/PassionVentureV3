@@ -64,7 +64,7 @@ class UpdateContribution : AppCompatActivity() {
         database.child(id).updateChildren(contributionUpdates).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 Toast.makeText(this, "Contribution updated successfully", Toast.LENGTH_SHORT).show()
-                finish() // Close the activity and go back to the previous screen
+                finish()
             } else {
                 Toast.makeText(this, "Failed to update contribution", Toast.LENGTH_SHORT).show()
             }
