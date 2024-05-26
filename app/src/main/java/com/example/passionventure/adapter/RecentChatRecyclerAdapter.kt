@@ -33,12 +33,7 @@ class RecentChatRecyclerAdapter(
         var lastMessageTimeText: TextView = itemView.findViewById(R.id.last_message_time_text)
 
         fun bind(model: ChatroomModel) {
-            // Display the last message
-            lastMessageText.text = model.lastMessage
 
-            // Format and display the timestamp
-            val formattedTime = FirebaseUtil.timestampToString(model.lastMessageTimestamp)
-            lastMessageTimeText.text = formattedTime
 
             FirebaseUtil.getOtherUserFromChatroom(context, model.userIds, object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

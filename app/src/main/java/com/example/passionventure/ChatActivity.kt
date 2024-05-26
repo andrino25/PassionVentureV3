@@ -29,7 +29,6 @@ class ChatActivity : AppCompatActivity() {
     private var chatroomId: String? = null
     private var chatroomModel: ChatroomModel? = null
     private var adapter: ChatRecyclerAdapter? = null
-    private var currentUsername: String? = null
 
     private lateinit var messageInput: EditText
     private lateinit var sendMessageBtn: ImageButton
@@ -37,23 +36,42 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var otherUsername: TextView
     private lateinit var recyclerView: RecyclerView
 
-    companion object {
-        private const val PREFERENCE_FILE_KEY = "com.example.passionventure.PREFERENCE_FILE_KEY"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        // Retrieve UserModel from intent
         otherUser = AndroidUtil.getUserModelFromIntent(intent)
-        currentUsername = getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
-            .getString("currentUsername", null)
 
-        // Get chatroom ID using usernames
-        chatroomId = currentUsername?.let { FirebaseUtil.getChatroomId(it, otherUser?.username ?: "") }
+        // Initialize views
+        messageInput = findViewById(R.id.chat_message_input)
+        sendMessageBtn = findViewById(R.id.message_send_btn)
+        backBtn = findViewById(R.id.back_btn)
+        otherUsername = findViewById(R.id.other_username)
+        recyclerView = findViewById(R.id.chat_recycler_view)
 
-        initializeViews()
+        // Set other user's username
         otherUsername.text = otherUser?.username
+
+        // Get the current username
+        val currentUsername = FirebaseUtil.getCurrentUsername(this)
+        if (currentUsername != null && otherUser != null) {
+            // Get chatroom ID using usernames
+            chatroomId = otherUser!!.username?.let {
+                FirebaseUtil.getChatroomId(currentUsername,
+                    it
+                )
+            }
+
+            // Create or get chatroom model
+            getOrCreateChatroomModel(currentUsername)
+
+            // Setup RecyclerView
+            setupChatRecyclerView()
+        } else {
+            Toast.makeText(this, "Failed to retrieve user information", Toast.LENGTH_SHORT).show()
+            finish()
+        }
 
         sendMessageBtn.setOnClickListener {
             val message = messageInput.text.toString().trim()
@@ -65,16 +83,6 @@ class ChatActivity : AppCompatActivity() {
         backBtn.setOnClickListener {
             onBackPressed()
         }
-
-        getOrCreateChatroomModel()
-    }
-
-    private fun initializeViews() {
-        messageInput = findViewById(R.id.chat_message_input)
-        sendMessageBtn = findViewById(R.id.message_send_btn)
-        backBtn = findViewById(R.id.back_btn)
-        otherUsername = findViewById(R.id.other_username)
-        recyclerView = findViewById(R.id.chat_recycler_view)
     }
 
     private fun setupChatRecyclerView() {
@@ -89,7 +97,6 @@ class ChatActivity : AppCompatActivity() {
                 .build()
 
             adapter = ChatRecyclerAdapter(options, applicationContext)
-
             val layoutManager = LinearLayoutManager(this)
             layoutManager.stackFromEnd = true
             recyclerView.layoutManager = layoutManager
@@ -105,60 +112,51 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-
     private fun sendMessageToUser(message: String) {
-        chatroomModel?.apply {
-            lastMessageTimestamp = System.currentTimeMillis()
-            lastMessageSenderId = FirebaseUtil.getCurrentUsername(this@ChatActivity).toString()
-            lastMessage = message
-            FirebaseUtil.getChatroomReference(chatroomId).setValue(this)
-        }
+        val currentUsername = FirebaseUtil.getCurrentUsername(this)
+        if (currentUsername != null && chatroomId != null) {
+            val timestamp = System.currentTimeMillis()
+            val chatMessageModel = ChatMessageModel(message, currentUsername, timestamp)
 
-        val chatMessageModel = FirebaseUtil.getCurrentUsername(this)?.let {
-            ChatMessageModel(message, it, System.currentTimeMillis())
-        }
-        if (chatMessageModel != null) {
             val chatMessageRef = FirebaseUtil.getChatroomMessageReference(chatroomId!!).push()
             chatMessageRef.setValue(chatMessageModel).addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     messageInput.setText("")
+                    updateChatroomInfo(currentUsername, message, timestamp)
                 } else {
-                    // Handle the error
+                    Toast.makeText(this, "Failed to send message", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-
-
-    private fun getOrCreateChatroomModel() {
-        chatroomId?.let { id ->
-            val chatroomRef = FirebaseUtil.getChatroomReference(id)
-            chatroomRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (!snapshot.exists()) {
-                        // First time chat
-                        val userIds = listOfNotNull(FirebaseUtil.getCurrentUsername(this@ChatActivity), otherUser?.username)
-                        val newChatroomModel = ChatroomModel(id, userIds, System.currentTimeMillis(), "")
-                        chatroomRef.setValue(newChatroomModel)
-                    }
-                    setupChatRecyclerView()
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@ChatActivity, "Failed to load chat room", Toast.LENGTH_SHORT).show()
-                }
-            })
+    private fun updateChatroomInfo(senderId: String, message: String, timestamp: Long) {
+        chatroomId?.let { chatroomId ->
+            val chatroomRef = FirebaseUtil.getChatroomReference(chatroomId)
+            chatroomRef.child("lastMessageSenderId").setValue(senderId)
+            chatroomRef.child("lastMessage").setValue(message)
+            chatroomRef.child("lastMessageTimestamp").setValue(timestamp)
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-        adapter?.startListening()
-    }
+    private fun getOrCreateChatroomModel(currentUsername: String) {
+        chatroomId?.let { chatroomId ->
+            val chatroomRef = FirebaseUtil.getChatroomReference(chatroomId)
+            chatroomRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (!snapshot.exists()) {
+                        val userIds = listOf(currentUsername, otherUser?.username ?: "")
+                        chatroomModel = ChatroomModel(chatroomId, userIds, System.currentTimeMillis(), "")
+                        chatroomRef.setValue(chatroomModel)
+                    } else {
+                        chatroomModel = snapshot.getValue(ChatroomModel::class.java)
+                    }
+                }
 
-    override fun onStop() {
-        super.onStop()
-        adapter?.stopListening()
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle database error
+                }
+            })
+        }
     }
 }
