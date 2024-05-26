@@ -41,7 +41,7 @@
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
         android:background="@drawable/rounded_corners"
-        android:hint="Search"
+        android:hint="Search a job"
         android:paddingLeft="20dp"
         tools:ignore="TouchTargetSizeCheck" />
 
