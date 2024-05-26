@@ -39,22 +39,9 @@ class ResourcesFragment : Fragment() {
 
         // Initialize Firebase database reference
         contributionsRef = FirebaseDatabase.getInstance().getReference("contributions")
-
-        // Set up RecyclerView
-        setupRecyclerView()
-
-        // Fetch contributions
-        fetchContributions()
-
-
-        return root
-    }
-
-
-    private fun setupRecyclerView() {
         contributionList = mutableListOf()
-        contributionsAdapter = ContributionAdapter(requireContext(),
-            { contribution -> // onItemClick
+        contributionsAdapter = ContributionAdapter(requireContext(), contributionList,
+            { contribution ->
                 val intent = Intent(requireContext(), ContributionDetails::class.java).apply {
                     putExtra("id", contribution.id)
                     putExtra("contributionTitle", contribution.title)
@@ -69,20 +56,41 @@ class ResourcesFragment : Fragment() {
             adapter = contributionsAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+
+        // Fetch contributions
+        fetchContributions()
+
+        val searchEditText: EditText = binding.searchTab
+        searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // Not needed
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                contributionsAdapter.filter(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
+
+        return root
     }
+
+
 
     private fun fetchContributions() {
         contributionsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val contributions = mutableListOf<Contribution>()
+                contributionList.clear()
                 for (childSnapshot in snapshot.children) {
                     val contribution = childSnapshot.getValue(Contribution::class.java)
                     contribution?.let {
-                        contributions.add(it)
+                        contributionList.add(it)
                     }
                 }
                 // Update adapter's list with fetched contributions
-                contributionsAdapter.submitList(contributions)
+                contributionsAdapter.submitList(contributionList)
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -90,6 +98,7 @@ class ResourcesFragment : Fragment() {
             }
         })
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

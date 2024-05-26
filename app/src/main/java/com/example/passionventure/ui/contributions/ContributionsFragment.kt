@@ -40,7 +40,16 @@ class ContributionsFragment : Fragment() {
 
         contributionsRef = FirebaseDatabase.getInstance().getReference("contributions")
 
-        setupRecyclerView()
+        contributionList = mutableListOf()
+        contributionsAdapter = ContributionAdapter(requireContext(), contributionList,
+            { contribution ->
+                val intent = Intent(requireContext(), ContributionDetails::class.java).apply {
+                    putExtra("id", contribution.id)
+                }
+                startActivity(intent)
+            },
+            true // isEditable
+        )
 
         // Query contributions based on mentorName
         mentorName?.let { fetchContributions(it) }
@@ -48,21 +57,6 @@ class ContributionsFragment : Fragment() {
         return root
     }
 
-    private fun setupRecyclerView() {
-        // Initialize the adapter with context and click listener
-        contributionsAdapter = ContributionAdapter(requireContext(),
-            { contribution ->
-            val intent = Intent(requireContext(), ContributionDetails::class.java).apply {
-                putExtra("id", contribution.id)
-            }
-            startActivity(intent)
-        }, true)  // isEditable = true
-
-        binding.recyclerView.apply {
-            adapter = contributionsAdapter
-            layoutManager = LinearLayoutManager(requireContext())
-        }
-    }
 
     private fun fetchContributions(mentorName: String) {
         contributionsRef.orderByChild("mentorName").equalTo(mentorName)

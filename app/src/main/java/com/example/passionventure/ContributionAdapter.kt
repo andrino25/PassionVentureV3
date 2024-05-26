@@ -15,12 +15,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.FirebaseDatabase
 import com.squareup.picasso.Picasso
+import java.util.Locale
 
 class ContributionAdapter(
     private val context: Context,
+    private var contributionList: List<Contribution>,
     private val onItemClick: (Contribution) -> Unit,
     private val isEditable: Boolean
 ) : ListAdapter<Contribution, ContributionAdapter.ContributionViewHolder>(ContributionDiffCallback()) {
+
+    private var filteredList: List<Contribution> = contributionList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContributionViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.contribution_list, parent, false)
@@ -28,7 +32,7 @@ class ContributionAdapter(
     }
 
     override fun onBindViewHolder(holder: ContributionViewHolder, position: Int) {
-        val contribution = getItem(position)
+        val contribution = filteredList[position]
         holder.bind(contribution, context, onItemClick, isEditable)
     }
 
@@ -119,6 +123,19 @@ class ContributionAdapter(
         override fun areContentsTheSame(oldItem: Contribution, newItem: Contribution): Boolean {
             return oldItem == newItem
         }
+    }
+
+    fun filter(text: String) {
+        val searchText = text.toLowerCase(Locale.getDefault())
+        filteredList = if (searchText.isEmpty()) {
+            contributionList
+        } else {
+            contributionList.filter { contribution ->
+                contribution.title.toLowerCase(Locale.getDefault()).contains(searchText) ||
+                        contribution.mentorName.toLowerCase(Locale.getDefault()).contains(searchText)
+            }
+        }
+        submitList(filteredList)
     }
 }
 
