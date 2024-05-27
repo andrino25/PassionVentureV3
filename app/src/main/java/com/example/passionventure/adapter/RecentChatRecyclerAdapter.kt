@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passionventure.ChatActivity
@@ -15,61 +14,45 @@ import com.example.passionventure.model.ChatroomModel
 import com.example.passionventure.model.UserModel
 import com.example.passionventure.utils.AndroidUtil
 import com.example.passionventure.utils.FirebaseUtil
-import com.firebase.ui.database.FirebaseRecyclerAdapter
-import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-
+import com.google.firebase.database.*
 
 class RecentChatRecyclerAdapter(
-    options: FirebaseRecyclerOptions<ChatroomModel>,
-    private val context: Context
-) : FirebaseRecyclerAdapter<ChatroomModel, RecentChatRecyclerAdapter.ChatroomModelViewHolder>(options) {
+    private val chatrooms: List<ChatroomModel>,
+    private val context: Context,
+    private val currentUserId: String
+) : RecyclerView.Adapter<RecentChatRecyclerAdapter.ChatroomModelViewHolder>() {
 
     inner class ChatroomModelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var usernameText: TextView = itemView.findViewById(R.id.user_name_text)
         var lastMessageText: TextView = itemView.findViewById(R.id.last_message_text)
         var lastMessageTimeText: TextView = itemView.findViewById(R.id.last_message_time_text)
 
-        fun bind(model: ChatroomModel) {
-            // Display the last message
-            lastMessageText.text = model.lastMessage
 
-            // Format and display the timestamp
+
+            // Add click listener to the item view
+
+        fun bind(model: ChatroomModel) {
+            lastMessageText.text = if (model.lastMessageSenderId == model.userIds.get(0)) {
+                "You: ${model.lastMessage}"
+            } else {
+                model.lastMessage
+            }
+            itemView.setOnClickListener {
+                // navigate to chat activity
+                val intent = Intent(context, ChatActivity::class.java)
+                intent.putExtra("username", model.userIds.get(1))
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                context.startActivity(intent)
+            }
+
+            usernameText.text = model.userIds.get(1)
             val formattedTime = FirebaseUtil.timestampToString(model.lastMessageTimestamp)
             lastMessageTimeText.text = formattedTime
 
-            FirebaseUtil.getOtherUserFromChatroom(context, model.userIds, object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val otherUserModel = snapshot.getValue(UserModel::class.java)
-                    otherUserModel?.let { userModel ->
-                        val currentUserId = FirebaseUtil.getCurrentUsername(context)
-                        val lastMessageSentByMe = model.lastMessageSenderId == currentUserId
 
-                        usernameText.text = userModel.username
-                        lastMessageText.text = if (lastMessageSentByMe) {
-                            "You: ${model.lastMessage}"
-                        } else {
-                            model.lastMessage
-                        }
-                        lastMessageTimeText.text = model.lastMessageTimestamp.let { timestamp ->
-                            FirebaseUtil.timestampToString(timestamp)
-                        }
-
-                        itemView.setOnClickListener {
-                            val intent = Intent(context, ChatActivity::class.java)
-                            AndroidUtil.passUserModelAsIntent(intent, userModel)
-                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                            context.startActivity(intent)
-                        }
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("RecentChatAdapter", "Failed to fetch user data", error.toException())
-                }
-            })
+            FirebaseUtil.getOtherUserFromChatroom(model.userIds, currentUserId) { otherUserModel ->
+                usernameText.text = otherUserModel.username
+            }
         }
     }
 
@@ -78,7 +61,11 @@ class RecentChatRecyclerAdapter(
         return ChatroomModelViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ChatroomModelViewHolder, position: Int, model: ChatroomModel) {
-        holder.bind(model)
+    override fun onBindViewHolder(holder: ChatroomModelViewHolder, position: Int) {
+        holder.bind(chatrooms[position])
+    }
+
+    override fun getItemCount(): Int {
+        return chatrooms.size
     }
 }

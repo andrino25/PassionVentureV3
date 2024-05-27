@@ -8,23 +8,25 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class RecentChat : AppCompatActivity() {
 
-
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var searchButton: ImageButton
     private lateinit var backButton: ImageButton
     private lateinit var chatFragment: ChatFragment
+    private lateinit var currUser: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recent_chat)
+
+        currUser = intent.getStringExtra("username").toString()
 
         // Initialize views
         bottomNavigationView = findViewById(R.id.bottom_navigation)
         searchButton = findViewById(R.id.main_search_btn)
         backButton = findViewById(R.id.backButton)
 
-        // Initialize fragment
-        chatFragment = ChatFragment()
+        // Initialize fragment with the username
+        chatFragment = ChatFragment.newInstance(currUser)
 
         // Set click listener for the back button
         backButton.setOnClickListener {

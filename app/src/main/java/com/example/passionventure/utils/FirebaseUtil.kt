@@ -1,6 +1,9 @@
 package com.example.passionventure.utils
 
 import android.content.Context
+import com.example.passionventure.model.UserModel
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
@@ -23,6 +26,26 @@ class FirebaseUtil {
         // Get a reference to the users node
         fun allUserCollectionReference(): DatabaseReference {
             return FirebaseDatabase.getInstance().reference.child(USERS_PATH)
+        }
+
+        fun getOtherUserFromChatroom(userIds: List<String>, currentUserId: String, callback: (UserModel) -> Unit) {
+            val otherUserId = userIds.firstOrNull { it != currentUserId }
+
+            if (otherUserId != null) {
+                val userReference = FirebaseDatabase.getInstance().getReference("users").child(otherUserId)
+                userReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val otherUserModel = dataSnapshot.getValue(UserModel::class.java)
+                        if (otherUserModel != null) {
+                            callback(otherUserModel)
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle possible errors.
+                    }
+                })
+            }
         }
 
         fun getChatroomReference(chatroomId: String?): DatabaseReference {
