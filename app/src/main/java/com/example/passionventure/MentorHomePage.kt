@@ -110,7 +110,10 @@ class MentorHomePage : AppCompatActivity() {
                     true
                 }
                 R.id.messages -> {
-                    // Handle Messages option click
+                    val currUser = intent.getStringExtra("username")
+                    val intent = Intent(this, RecentChat::class.java)
+                    intent.putExtra("username", currUser)
+                    startActivity(intent)
                     true
                 }
                 R.id.logout -> {

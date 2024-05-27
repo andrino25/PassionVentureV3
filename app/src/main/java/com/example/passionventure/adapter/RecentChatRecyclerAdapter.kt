@@ -27,8 +27,6 @@ class RecentChatRecyclerAdapter(
         var lastMessageText: TextView = itemView.findViewById(R.id.last_message_text)
         var lastMessageTimeText: TextView = itemView.findViewById(R.id.last_message_time_text)
 
-
-
             // Add click listener to the item view
 
         fun bind(model: ChatroomModel) {
