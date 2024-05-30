@@ -17,53 +17,60 @@ import com.example.passionventure.utils.FirebaseUtil
 import com.google.firebase.database.*
 
 class RecentChatRecyclerAdapter(
-    private val chatrooms: List<ChatroomModel>,
+    private var chatRooms: List<ChatroomModel>,
     private val context: Context,
-    private val currentUserId: String
+    private val listener: OnChatItemClickListener
 ) : RecyclerView.Adapter<RecentChatRecyclerAdapter.ChatroomModelViewHolder>() {
 
     inner class ChatroomModelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var usernameText: TextView = itemView.findViewById(R.id.user_name_text)
-        var lastMessageText: TextView = itemView.findViewById(R.id.last_message_text)
-        var lastMessageTimeText: TextView = itemView.findViewById(R.id.last_message_time_text)
+        private val usernameTextView: TextView = itemView.findViewById(R.id.user_name_text)
+        private val lastMessageTextView: TextView = itemView.findViewById(R.id.last_message_text)
+        private val timestampTextView: TextView = itemView.findViewById(R.id.last_message_time_text)
 
-            // Add click listener to the item view
+        fun bind(chatRoom: ChatroomModel) {
+            FirebaseUtil.getOtherUserFromChatroom(context, chatRoom.userIds, object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val otherUserModel = snapshot.getValue(UserModel::class.java)
+                    if (otherUserModel != null && !otherUserModel.username.isNullOrEmpty()) {
+                        usernameTextView.text = otherUserModel.username
+                    } else {
+                        usernameTextView.text = chatRoom.userIds.find { it != FirebaseUtil.getCurrentUsername(context) }
+                    }
+                }
 
-        fun bind(model: ChatroomModel) {
-            lastMessageText.text = if (model.lastMessageSenderId == model.userIds.get(0)) {
-                "You: ${model.lastMessage}"
+                override fun onCancelled(error: DatabaseError) {
+                    usernameTextView.text = chatRoom.userIds.find { it != FirebaseUtil.getCurrentUsername(context) }
+                }
+            })
+
+            lastMessageTextView.text = if (chatRoom.lastMessageSenderId == FirebaseUtil.getCurrentUsername(context)) {
+                "You: ${chatRoom.lastMessage}"
             } else {
-                model.lastMessage
+                chatRoom.lastMessage
             }
+            timestampTextView.text = FirebaseUtil.timestampToString(chatRoom.lastMessageTimestamp)
+
             itemView.setOnClickListener {
-                // navigate to chat activity
-                val intent = Intent(context, ChatActivity::class.java)
-                intent.putExtra("username", model.userIds.get(1))
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                context.startActivity(intent)
-            }
-
-            usernameText.text = model.userIds.get(1)
-            val formattedTime = FirebaseUtil.timestampToString(model.lastMessageTimestamp)
-            lastMessageTimeText.text = formattedTime
-
-
-            FirebaseUtil.getOtherUserFromChatroom(model.userIds, currentUserId) { otherUserModel ->
-                usernameText.text = otherUserModel.username
+                listener.onChatItemClick(chatRoom)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatroomModelViewHolder {
-        val view = LayoutInflater.from(context).inflate(R.layout.recent_chat_recycler_row, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.recent_chat_recycler_row, parent, false)
         return ChatroomModelViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ChatroomModelViewHolder, position: Int) {
-        holder.bind(chatrooms[position])
+        val chatRoom = chatRooms[position]
+        holder.bind(chatRoom)
     }
 
     override fun getItemCount(): Int {
-        return chatrooms.size
+        return chatRooms.size
+    }
+
+    interface OnChatItemClickListener {
+        fun onChatItemClick(chatRoom: ChatroomModel)
     }
 }

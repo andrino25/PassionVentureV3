@@ -1,5 +1,6 @@
 package com.example.passionventure
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.passionventure.adapter.RecentChatRecyclerAdapter
 import com.example.passionventure.model.ChatroomModel
+import com.example.passionventure.model.UserModel
+import com.example.passionventure.utils.AndroidUtil
 import com.example.passionventure.utils.FirebaseUtil
 import com.google.firebase.database.*
 
-class ChatFragment : Fragment() {
+class ChatFragment : Fragment(), RecentChatRecyclerAdapter.OnChatItemClickListener {
+
     private lateinit var recyclerView: RecyclerView
-    private lateinit var currentUserId: String
     private lateinit var adapter: RecentChatRecyclerAdapter
 
     override fun onCreateView(
@@ -24,50 +27,54 @@ class ChatFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
         recyclerView = view.findViewById(R.id.recycler_view)
 
-        // Retrieve the current user ID from arguments
-        currentUserId = arguments?.getString(ARG_CURRENT_USER_ID) ?: ""
-
         setupRecyclerView()
         return view
     }
 
     private fun setupRecyclerView() {
-        val query = FirebaseUtil.allChatroomCollectionReference()
-            .orderByChild("lastMessageTimestamp")
+        val currentUsername = FirebaseUtil.getCurrentUsername(requireContext())
+        val chatRoomsRef = FirebaseUtil.allChatroomCollectionReference()
 
-        query.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val chatrooms = mutableListOf<ChatroomModel>()
-                for (chatroomSnapshot in dataSnapshot.children) {
-                    val chatroomModel = chatroomSnapshot.getValue(ChatroomModel::class.java)
-                    if (chatroomModel?.userIds?.get(0)?.contains(currentUserId) == true) {
-                        chatrooms.add(chatroomModel)
+        chatRoomsRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val chatRooms = mutableListOf<ChatroomModel>()
+                for (roomSnapshot in snapshot.children) {
+                    val room = roomSnapshot.getValue(ChatroomModel::class.java)
+                    if (room != null && room.userIds.contains(currentUsername)) {
+                        chatRooms.add(room)
                     }
                 }
-                setupAdapter(chatrooms)
+                adapter = RecentChatRecyclerAdapter(chatRooms.sortedByDescending { it.lastMessageTimestamp }, requireContext(), this@ChatFragment)
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+                recyclerView.adapter = adapter
             }
 
-            override fun onCancelled(databaseError: DatabaseError) {
+            override fun onCancelled(error: DatabaseError) {
                 // Handle error
             }
         })
     }
 
-    private fun setupAdapter(chatrooms: List<ChatroomModel>) {
-        adapter = RecentChatRecyclerAdapter(chatrooms, requireContext(), currentUserId)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = adapter
-    }
+    override fun onChatItemClick(chatRoom: ChatroomModel) {
+        val currentUsername = FirebaseUtil.getCurrentUsername(requireContext())
+        val otherUsername = chatRoom.userIds.find { it != currentUsername }
+        if (otherUsername != null) {
+            FirebaseUtil.getUserByUsername(otherUsername, object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val otherUserModel = snapshot.getValue(UserModel::class.java)
+                    if (otherUserModel != null) {
+                        val intent = Intent(requireContext(), ChatActivity::class.java)
+                        AndroidUtil.passUserModelAsIntent(intent, otherUserModel) // Pass the user data
+                        intent.putExtra("chatRoomId", chatRoom.chatroomId)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        startActivity(intent)
+                    }
+                }
 
-    companion object {
-        private const val ARG_CURRENT_USER_ID = "currentUserId"
-
-        fun newInstance(currentUserId: String): ChatFragment {
-            val fragment = ChatFragment()
-            val args = Bundle()
-            args.putString(ARG_CURRENT_USER_ID, currentUserId)
-            fragment.arguments = args
-            return fragment
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle error
+                }
+            })
         }
     }
 }

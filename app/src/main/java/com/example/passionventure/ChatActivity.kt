@@ -43,6 +43,17 @@ class ChatActivity : AppCompatActivity() {
         // Retrieve UserModel from intent
         otherUser = AndroidUtil.getUserModelFromIntent(intent)
 
+        // Attempt to retrieve chatroom ID directly from intent extras
+        chatroomId = intent.getStringExtra("chatRoomId")
+
+        // If chatroom ID is not available in intent extras, retrieve it through FirebaseUtil
+        if (chatroomId == null && otherUser != null) {
+            val currentUsername = FirebaseUtil.getCurrentUsername(this)
+            if (currentUsername != null) {
+                chatroomId = FirebaseUtil.getChatroomId(currentUsername, otherUser!!.username ?: "")
+            }
+        }
+
         // Initialize views
         messageInput = findViewById(R.id.chat_message_input)
         sendMessageBtn = findViewById(R.id.message_send_btn)
@@ -50,24 +61,26 @@ class ChatActivity : AppCompatActivity() {
         otherUsername = findViewById(R.id.other_username)
         recyclerView = findViewById(R.id.chat_recycler_view)
 
-        // Set other user's username
-        otherUsername.text = otherUser?.username
+        // Check if chatroom ID is available
+        if (chatroomId != null) {
+            // Get the current username
+            val currentUsername = FirebaseUtil.getCurrentUsername(this)
+            if (currentUsername != null) {
+                // Create or get chatroom model
+                getOrCreateChatroomModel(currentUsername)
 
-        // Get the current username
-        val currentUsername = FirebaseUtil.getCurrentUsername(this)
-        if (currentUsername != null && otherUser != null) {
-            // Get chatroom ID using usernames
-            chatroomId = otherUser!!.username?.let {
-                FirebaseUtil.getChatroomId(currentUsername, it)
+                // Set other user's username
+                val userId2 = otherUser?.username ?: chatroomModel?.userIds?.find { it != currentUsername }
+                otherUsername.text = userId2
+
+                // Setup RecyclerView
+                setupChatRecyclerView()
+            } else {
+                Toast.makeText(this, "Failed to retrieve user information", Toast.LENGTH_SHORT).show()
+                finish()
             }
-
-            // Create or get chatroom model
-            getOrCreateChatroomModel(currentUsername)
-
-            // Setup RecyclerView
-            setupChatRecyclerView()
         } else {
-            Toast.makeText(this, "Failed to retrieve user information", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Failed to retrieve chatroom ID", Toast.LENGTH_SHORT).show()
             finish()
         }
 
@@ -148,6 +161,8 @@ class ChatActivity : AppCompatActivity() {
                         chatroomRef.setValue(chatroomModel)
                     } else {
                         chatroomModel = snapshot.getValue(ChatroomModel::class.java)
+                        val userId2 = chatroomModel?.userIds?.find { it != currentUsername }
+                        otherUsername.text = userId2
                     }
                 }
 
@@ -157,5 +172,4 @@ class ChatActivity : AppCompatActivity() {
             })
         }
     }
-
 }
