@@ -3,8 +3,10 @@ package com.example.passionventure
 import Booking
 import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
+import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -23,6 +25,7 @@ class Bookings : AppCompatActivity() {
     private lateinit var noBookingsTextView: TextView
     private lateinit var titleTextView: TextView
     private lateinit var currentUser: String
+    private val originalBookingsList = mutableListOf<Pair<Booking, String>>() // To keep the original list
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,12 @@ class Bookings : AppCompatActivity() {
         })
         recyclerView.adapter = bookingsAdapter
 
+        // Set up filter button
+        val filterButton = findViewById<ImageButton>(R.id.filterButton)
+        filterButton.setOnClickListener {
+            showFilterMenu(it)
+        }
+
         // Fetch bookings data from Firebase
         fetchBookingsFromDatabase(currentUser)
     }
@@ -58,14 +67,14 @@ class Bookings : AppCompatActivity() {
         databaseReference.orderByChild("currUser").equalTo(currentUser)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    val bookingsList = mutableListOf<Pair<Booking, String>>()
+                    originalBookingsList.clear() // Clear the original list before adding new items
                     for (bookingSnapshot in snapshot.children) {
                         val booking = bookingSnapshot.getValue(Booking::class.java)
-                        booking?.let { bookingsList.add(Pair(it, bookingSnapshot.key!!)) }
+                        booking?.let { originalBookingsList.add(Pair(it, bookingSnapshot.key!!)) }
                     }
 
                     // Check if the bookings list is empty
-                    if (bookingsList.isEmpty()) {
+                    if (originalBookingsList.isEmpty()) {
                         // Hide RecyclerView and show "No bookings" message
                         recyclerView.visibility = View.GONE
                         noBookingsTextView.visibility = View.VISIBLE
@@ -73,8 +82,8 @@ class Bookings : AppCompatActivity() {
                         // Show RecyclerView and hide "No bookings" message
                         recyclerView.visibility = View.VISIBLE
                         noBookingsTextView.visibility = View.GONE
-                        // Submit the list to the adapter
-                        bookingsAdapter.submitList(bookingsList)
+                        // Submit the original list to the adapter
+                        bookingsAdapter.submitList(originalBookingsList)
                     }
                 }
 
@@ -112,6 +121,31 @@ class Bookings : AppCompatActivity() {
         val databaseReference = FirebaseDatabase.getInstance().reference.child("bookings")
         databaseReference.child(key).removeValue()
     }
+
+    private fun showFilterMenu(view: View) {
+        val popup = PopupMenu(this, view)
+        popup.menuInflater.inflate(R.menu.filter_menu, popup.menu)
+        popup.setOnMenuItemClickListener { item: MenuItem ->
+            filterBookings(item.title.toString())
+            true
+        }
+        popup.show()
+    }
+
+    private fun filterBookings(status: String) {
+        val filteredList = if (status == "All") {
+            originalBookingsList
+        } else {
+            originalBookingsList.filter { it.first.bookingStatus == status }
+        }
+
+        bookingsAdapter.submitList(filteredList)
+        if (filteredList.isEmpty()) {
+            recyclerView.visibility = View.GONE
+            noBookingsTextView.visibility = View.VISIBLE
+        } else {
+            recyclerView.visibility = View.VISIBLE
+            noBookingsTextView.visibility = View.GONE
+        }
+    }
 }
-
-
