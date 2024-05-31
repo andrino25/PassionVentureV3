@@ -26,6 +26,7 @@ class Bookings : AppCompatActivity() {
     private lateinit var titleTextView: TextView
     private lateinit var currentUser: String
     private val originalBookingsList = mutableListOf<Pair<Booking, String>>() // To keep the original list
+    private var currentFilter: String = "All" // To keep track of the current filter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,18 +74,10 @@ class Bookings : AppCompatActivity() {
                         booking?.let { originalBookingsList.add(Pair(it, bookingSnapshot.key!!)) }
                     }
 
-                    // Check if the bookings list is empty
-                    if (originalBookingsList.isEmpty()) {
-                        // Hide RecyclerView and show "No bookings" message
-                        recyclerView.visibility = View.GONE
-                        noBookingsTextView.visibility = View.VISIBLE
-                    } else {
-                        // Show RecyclerView and hide "No bookings" message
-                        recyclerView.visibility = View.VISIBLE
-                        noBookingsTextView.visibility = View.GONE
-                        // Submit the original list to the adapter
-                        bookingsAdapter.submitList(originalBookingsList)
-                    }
+                    // Reverse the list to show latest bookings first
+                    originalBookingsList.reverse()
+
+                    filterBookings(currentFilter) // Apply the current filter
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -119,14 +112,30 @@ class Bookings : AppCompatActivity() {
 
     private fun cancelBooking(key: String) {
         val databaseReference = FirebaseDatabase.getInstance().reference.child("bookings")
-        databaseReference.child(key).removeValue()
+        databaseReference.child(key).removeValue().addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Manual iteration and removal
+                val iterator = originalBookingsList.iterator()
+                while (iterator.hasNext()) {
+                    val pair = iterator.next()
+                    if (pair.second == key) {
+                        iterator.remove()
+                        break
+                    }
+                }
+                filterBookings(currentFilter) // Refresh the adapter with the current filter
+            } else {
+                Toast.makeText(this, "Failed to cancel booking", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun showFilterMenu(view: View) {
         val popup = PopupMenu(this, view)
         popup.menuInflater.inflate(R.menu.filter_menu, popup.menu)
         popup.setOnMenuItemClickListener { item: MenuItem ->
-            filterBookings(item.title.toString())
+            currentFilter = item.title.toString()
+            filterBookings(currentFilter)
             true
         }
         popup.show()
@@ -134,7 +143,7 @@ class Bookings : AppCompatActivity() {
 
     private fun filterBookings(status: String) {
         val filteredList = if (status == "All") {
-            originalBookingsList
+            originalBookingsList.toList()
         } else {
             originalBookingsList.filter { it.first.bookingStatus == status }
         }
