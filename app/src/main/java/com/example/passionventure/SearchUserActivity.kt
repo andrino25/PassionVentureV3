@@ -38,7 +38,7 @@ class SearchUserActivity : AppCompatActivity() {
         }
 
         searchButton.setOnClickListener {
-            val searchTerm = searchInput.text.toString().trim().toLowerCase()
+            val searchTerm = searchInput.text.toString()
             if (searchTerm.isEmpty() || searchTerm.length < 3) {
                 searchInput.error = "Invalid Username"
                 return@setOnClickListener

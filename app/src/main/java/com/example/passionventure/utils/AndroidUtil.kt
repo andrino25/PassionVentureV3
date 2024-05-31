@@ -25,6 +25,5 @@ class AndroidUtil {
             return userModel
         }
 
-
     }
 }
